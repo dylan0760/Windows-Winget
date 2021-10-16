@@ -1,0 +1,1 @@
+winget install --id=qBittorrent.qBittorrent  -e
