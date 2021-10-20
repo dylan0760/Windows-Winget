@@ -1,1 +1,1 @@
-winget install --id=plex.plexmediaplayer  -e
+winget install --id=Plex.Plex  -e
