@@ -1,0 +1,1 @@
+winget install -e --id REALiX.HWiNFO --accept-package-agreements --accept-source-agreements --silent

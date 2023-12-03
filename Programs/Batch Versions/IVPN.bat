@@ -1,0 +1,1 @@
+winget install --id=IVPN.IVPN -e --accept-package-agreements --accept-source-agreements --silent

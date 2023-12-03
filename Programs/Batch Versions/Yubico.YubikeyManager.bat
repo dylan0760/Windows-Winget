@@ -1,0 +1,1 @@
+winget install -e --id Yubico.YubikeyManager --accept-package-agreements --accept-source-agreements --silent

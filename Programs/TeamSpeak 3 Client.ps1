@@ -1,1 +1,0 @@
-winget install --id=TeamSpeakSystems.TeamSpeakClient  -e

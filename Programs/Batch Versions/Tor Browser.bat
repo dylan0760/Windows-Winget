@@ -1,0 +1,1 @@
+winget install --id=TorProject.TorBrowser -e --accept-package-agreements --accept-source-agreements --silent

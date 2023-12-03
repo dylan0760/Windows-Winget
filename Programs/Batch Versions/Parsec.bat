@@ -1,0 +1,1 @@
+winget install -e --id Parsec.Parsec --accept-package-agreements --accept-source-agreements --silent

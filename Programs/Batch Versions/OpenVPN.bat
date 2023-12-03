@@ -1,0 +1,1 @@
+winget install --id=OpenVPNTechnologies.OpenVPN  -e --accept-package-agreements --accept-source-agreements --silent

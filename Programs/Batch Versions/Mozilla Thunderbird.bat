@@ -1,0 +1,1 @@
+winget install -e --id Mozilla.Thunderbird --accept-package-agreements --accept-source-agreements --silent

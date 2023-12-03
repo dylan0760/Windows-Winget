@@ -1,0 +1,1 @@
+winget install --id=GuinpinSoft.MakeMKV  -e --accept-package-agreements --accept-source-agreements --silent

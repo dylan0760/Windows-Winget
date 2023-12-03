@@ -1,0 +1,1 @@
+winget install -e --id NoIP.DUC --accept-package-agreements --accept-source-agreements --silent

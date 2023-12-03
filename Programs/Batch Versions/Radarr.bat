@@ -1,0 +1,1 @@
+winget install -e --id TeamRadarr.Radarr --accept-package-agreements --accept-source-agreements --silent

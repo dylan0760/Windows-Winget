@@ -1,0 +1,1 @@
+winget install --id=TheDocumentFoundation.LibreOffice -e --accept-package-agreements --accept-source-agreements --silent

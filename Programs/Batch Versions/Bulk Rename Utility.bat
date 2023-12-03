@@ -1,0 +1,1 @@
+winget install --id=TGRMNSoftware.BulkRenameUtility  -e --accept-package-agreements --accept-source-agreements --silent

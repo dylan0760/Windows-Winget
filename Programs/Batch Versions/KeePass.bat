@@ -1,0 +1,1 @@
+winget install --id=DominikReichl.KeePass -e --accept-package-agreements --accept-source-agreements --silent

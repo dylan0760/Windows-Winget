@@ -1,0 +1,1 @@
+winget install --id=Blizzard.BattleNet  -e --accept-package-agreements --accept-source-agreements --silent

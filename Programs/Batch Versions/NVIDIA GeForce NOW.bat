@@ -1,0 +1,1 @@
+winget install --id=Nvidia.GeForceNow -e --accept-package-agreements --accept-source-agreements --silent

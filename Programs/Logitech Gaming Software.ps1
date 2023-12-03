@@ -1,1 +1,0 @@
-winget install --id=Logitech.LGS  -e

@@ -1,0 +1,1 @@
+winget install --id=Brave.Brave -e --accept-package-agreements --accept-source-agreements --silent

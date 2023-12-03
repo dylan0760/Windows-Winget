@@ -1,0 +1,1 @@
+winget install --id=Logitech.LGS  -e --accept-package-agreements --accept-source-agreements --silent

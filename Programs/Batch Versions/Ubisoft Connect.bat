@@ -1,0 +1,1 @@
+winget install --id=Ubisoft.Connect  -e --accept-package-agreements --accept-source-agreements --silent

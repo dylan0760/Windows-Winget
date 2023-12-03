@@ -1,0 +1,1 @@
+winget install -e --id Git.Git --accept-package-agreements --accept-source-agreements --silent

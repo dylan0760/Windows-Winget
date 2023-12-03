@@ -1,0 +1,1 @@
+winget install --id=OBSProject.OBSStudio  -e --accept-package-agreements --accept-source-agreements --silent

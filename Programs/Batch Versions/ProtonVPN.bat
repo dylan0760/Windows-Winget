@@ -1,0 +1,1 @@
+winget install -e --id ProtonTechnologies.ProtonVPN --accept-package-agreements --accept-source-agreements --silent

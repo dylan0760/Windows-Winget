@@ -1,0 +1,1 @@
+winget install -e --id GlassWire.GlassWire --accept-package-agreements --accept-source-agreements --silent

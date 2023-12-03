@@ -1,0 +1,1 @@
+winget install --id=TeamProwlarr.Prowlarr -e --accept-package-agreements --accept-source-agreements --silent

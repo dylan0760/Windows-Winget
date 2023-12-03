@@ -1,0 +1,1 @@
+winget install -e --id NordVPN.NordVPN --accept-package-agreements --accept-source-agreements --silent
