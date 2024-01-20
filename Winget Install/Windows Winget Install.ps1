@@ -1,5 +1,11 @@
+# Set the PSGallery repository as trusted to avoid prompts
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+
+# Install the winget-install script from the PSGallery repository
 Install-Script -Name winget-install -Force
+
+
+# Run the winget-install script
 winget-install.ps1
 
 
