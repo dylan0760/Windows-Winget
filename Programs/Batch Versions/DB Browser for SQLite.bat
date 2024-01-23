@@ -1,1 +1,0 @@
-winget install --id=DBBrowserForSQLite.DBBrowserForSQLite -e --accept-package-agreements --accept-source-agreements --silent

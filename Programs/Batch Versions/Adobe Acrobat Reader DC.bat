@@ -1,1 +1,0 @@
-winget install --id=Adobe.Acrobat.Reader.64-bit  -e --accept-package-agreements --accept-source-agreements --silent

@@ -1,1 +1,0 @@
-winget install --id=ElectronicArts.EADesktop  -e --accept-package-agreements --accept-source-agreements --silent

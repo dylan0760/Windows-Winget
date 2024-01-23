@@ -1,1 +1,0 @@
-winget install --id=Telegram.TelegramDesktop  -e --accept-package-agreements --accept-source-agreements --silent

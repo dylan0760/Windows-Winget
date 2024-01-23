@@ -1,1 +1,0 @@
-winget install -e --id Plex.Plexamp --accept-package-agreements --accept-source-agreements --silent

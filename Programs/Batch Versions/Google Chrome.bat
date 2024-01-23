@@ -1,1 +1,0 @@
-winget install --id=Google.Chrome  -e --accept-package-agreements --accept-source-agreements --silent

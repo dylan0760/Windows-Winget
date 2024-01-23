@@ -1,1 +1,0 @@
-winget install --id=plex.Plex  -e --accept-package-agreements --accept-source-agreements --silent

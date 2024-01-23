@@ -1,1 +1,0 @@
-winget install --id=Microsoft.Teams  -e --accept-package-agreements --accept-source-agreements --silent

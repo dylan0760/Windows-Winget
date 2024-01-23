@@ -1,1 +1,0 @@
-winget install -e --id SomePythonThings.WingetUIStore --accept-package-agreements --accept-source-agreements --silent

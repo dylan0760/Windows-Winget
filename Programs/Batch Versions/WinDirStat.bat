@@ -1,1 +1,0 @@
-winget install --id=WinDirStat.WinDirStat -e --accept-package-agreements --accept-source-agreements --silent

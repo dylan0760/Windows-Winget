@@ -1,1 +1,0 @@
-winget install -e --id Plex.PlexMediaServer --accept-package-agreements --accept-source-agreements --silent

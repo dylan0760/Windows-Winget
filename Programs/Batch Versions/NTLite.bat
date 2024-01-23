@@ -1,1 +1,0 @@
-winget install -e --id Nlitesoft.NTLite --accept-package-agreements --accept-source-agreements --silent

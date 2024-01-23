@@ -1,1 +1,0 @@
-winget install -e --id MullvadVPN.MullvadVPN --accept-package-agreements --accept-source-agreements --silent
