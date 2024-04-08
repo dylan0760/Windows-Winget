@@ -13,3 +13,4 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install -e --id Plex.Plexamp --accept-package-agreements --accept-source-agreements --silent
+Pause

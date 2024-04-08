@@ -12,6 +12,5 @@ if (-not $isAdmin) {
 # Your script code goes here
 Write-Host "Running as administrator"
 
-
-winget install --id=Microsoft.Teams  -e --accept-package-agreements --accept-source-agreements --silent
-Pause
+winget install -e --id Microsoft.Sysinternals.ProcessExplorer --accept-package-agreements --accept-source-agreements --silent
+pause

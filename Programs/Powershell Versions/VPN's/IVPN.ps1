@@ -14,3 +14,4 @@ Write-Host "Running as administrator"
 
 
 winget install --id=IVPN.IVPN -e --accept-package-agreements --accept-source-agreements --silent
+Pause

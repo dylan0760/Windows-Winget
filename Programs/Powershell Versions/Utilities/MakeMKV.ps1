@@ -14,3 +14,4 @@ Write-Host "Running as administrator"
 
 
 winget install --id=GuinpinSoft.MakeMKV  -e --accept-package-agreements --accept-source-agreements --silent
+Pause

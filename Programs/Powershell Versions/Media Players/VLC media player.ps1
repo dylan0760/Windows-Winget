@@ -13,3 +13,4 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install --id=VideoLAN.VLC -e --accept-package-agreements --accept-source-agreements --silent
+Pause

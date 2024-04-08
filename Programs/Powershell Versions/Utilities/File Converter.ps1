@@ -13,3 +13,4 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install --id=AdrienAllard.FileConverter -e --accept-package-agreements --accept-source-agreements --silent
+Pause

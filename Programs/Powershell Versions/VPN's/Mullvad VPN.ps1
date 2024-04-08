@@ -13,3 +13,4 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install -e --id MullvadVPN.MullvadVPN --accept-package-agreements --accept-source-agreements --silent
+Pause

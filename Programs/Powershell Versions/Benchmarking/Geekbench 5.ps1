@@ -13,3 +13,5 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install --id=PrimateLabs.Geekbench.5  -e --accept-package-agreements --accept-source-agreements --silent
+Pause
+

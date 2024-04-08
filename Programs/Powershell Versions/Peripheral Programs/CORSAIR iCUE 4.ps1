@@ -12,6 +12,5 @@ if (-not $isAdmin) {
 # Your script code goes here
 Write-Host "Running as administrator"
 
-
-winget install --id=Microsoft.Teams  -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id=Corsair.iCUE.4 -e --accept-package-agreements --accept-source-agreements --silent
 Pause

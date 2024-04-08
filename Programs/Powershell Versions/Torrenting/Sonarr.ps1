@@ -14,3 +14,4 @@ Write-Host "Running as administrator"
 
 
 winget install -e --id TeamSonarr.Sonarr 
+Pause

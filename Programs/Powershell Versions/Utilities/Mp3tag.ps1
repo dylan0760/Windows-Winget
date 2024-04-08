@@ -13,3 +13,4 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 winget install --id=Mp3tag.Mp3tag -e --accept-package-agreements --accept-source-agreements --silent
+Pause
