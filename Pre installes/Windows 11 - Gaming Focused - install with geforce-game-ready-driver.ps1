@@ -80,7 +80,14 @@
 }
 
 Check-Update-Winget
+# Initial part of the script
+Write-Host "This is the first part of the script."
 
+# Pause for 5 seconds
+Start-Sleep -Seconds 5
+
+# Next part of the script
+Write-Host "This is the part of the script that runs after a 5-second pause."
 winget install --id=Brave.Brave -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id Discord.Discord -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id Valve.Steam -e --accept-package-agreements --accept-source-agreements --silent
