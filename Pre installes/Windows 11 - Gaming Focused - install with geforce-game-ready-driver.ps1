@@ -82,11 +82,12 @@
 Check-Update-Winget
 
 winget install --id=Brave.Brave -e --accept-package-agreements --accept-source-agreements --silent
-winget install -e --id Discord.Discord --accept-package-agreements --accept-source-agreement
-winget install -e --id Valve.Steam --accept-package-agreements --accept-source-agreements
-winget install -e --id ElectronicArts.EADesktop --accept-package-agreements --accept-source-agreements
-winget install -e --id 7zip.7zip --accept-package-agreements --accept-source-agreements
-winget install -e --id Notepad++.Notepad++ --accept-package-agreements --accept-source-agreements
-winget install -e --id Ubisoft.Connect --accept-package-agreements --accept-source-agreements
-winget install -e --id EpicGames.EpicGamesLauncher --accept-package-agreements --accept-source-agreements
-winget install -e --id Nvidia.GeForceExperience --accept-package-agreements --accept-source-agreements
+winget install --id Discord.Discord -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id Valve.Steam -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id ElectronicArts.EADesktop -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id 7zip.7zip -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id Notepad++.Notepad++ -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id Ubisoft.Connect -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id EpicGames.EpicGamesLauncher -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id GOG.Galaxy -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id Nvidia.GeForceExperience -e --accept-package-agreements --accept-source-agreements --silent
