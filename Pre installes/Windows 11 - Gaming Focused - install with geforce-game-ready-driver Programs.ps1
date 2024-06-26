@@ -8,3 +8,4 @@ winget install --id Ubisoft.Connect -e --accept-package-agreements --accept-sour
 winget install --id EpicGames.EpicGamesLauncher -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id GOG.Galaxy -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id Nvidia.GeForceExperience -e --accept-package-agreements --accept-source-agreements --silent
+pause
