@@ -83,8 +83,8 @@ Check-Update-Winget
 # Initial part of the script
 Write-Host "This is the first part of the script."
 
-# Pause for 5 seconds
-Start-Sleep -Seconds 5
+# Pause for 20 seconds
+Start-Sleep -Seconds 20
 
 # Next part of the script
 Write-Host "This is the part of the script that runs after a 5-second pause."
