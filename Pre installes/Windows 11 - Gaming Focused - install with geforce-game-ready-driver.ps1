@@ -79,4 +79,4 @@
     }
 }
 
-"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Invoke-Expression (New-Object System.Net.WebClient).DownloadString(\"https://raw.githubusercontent.com/dylan0760/Windows-Winget/main/Pre%20installes/Windows%2011%20-%20Gaming%20Focused%20-%20install%20with%20geforce-game-ready-driver%20Programs.ps1\")"
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/dylan0760/Windows-Winget/main/Pre%20installes/Windows%2011%20-%20Gaming%20Focused%20-%20install%20with%20geforce-game-ready-driver%20Programs.ps1")
