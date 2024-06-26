@@ -1,11 +1,8 @@
-# Initial part of the script
-Write-Host "This is the first part of the script."
-
-# Pause for 5 seconds
-Start-Sleep -Seconds 5
+# Pause for 60 seconds
+Start-Sleep -Seconds 60
 
 # Next part of the script
-Write-Host "This is the part of the script that runs after a 5-second pause."
+Write-Host "This is the part of the script that runs after a 60-second pause."
 
 # Installing additional software using Winget
 Write-Host "Installing Brave Browser..."
