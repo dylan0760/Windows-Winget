@@ -79,22 +79,3 @@
     }
 }
 
-Check-Update-Winget
-# Initial part of the script
-Write-Host "This is the first part of the script."
-
-# Pause for 20 seconds
-Start-Sleep -Seconds 20
-
-# Next part of the script
-Write-Host "This is the part of the script that runs after a 5-second pause."
-winget install --id=Brave.Brave -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id Discord.Discord -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id Valve.Steam -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id ElectronicArts.EADesktop -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id 7zip.7zip -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id Notepad++.Notepad++ -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id Ubisoft.Connect -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id EpicGames.EpicGamesLauncher -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id GOG.Galaxy -e --accept-package-agreements --accept-source-agreements --silent
-winget install --id Nvidia.GeForceExperience -e --accept-package-agreements --accept-source-agreements --silent
