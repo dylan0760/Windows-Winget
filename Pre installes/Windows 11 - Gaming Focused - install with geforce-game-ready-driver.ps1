@@ -78,6 +78,7 @@
         $ENV:PATH = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     }
 	{
+	 # Winget install commands
 winget install --id=Brave.Brave -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id=Discord.Discord -e --accept-package-agreements --accept-source-agreements --silent
 winget install --id=Valve.Steam -e --accept-package-agreements --accept-source-agreements --silent
