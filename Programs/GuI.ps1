@@ -15,7 +15,7 @@ if (-not (Check-Admin)) {
     exit
 }
 
-# Path to the directory containing the PowerShell scripts
+# Path to the folder containing PowerShell scripts
 $scriptFolderPath = "\\OPHELIA\Plex Server\My Software\Windows\Windows Winget\Programs\Windows-Winget\Programs\Powershell Versions"
 
 # Get all .ps1 files in the folder and its subdirectories
@@ -35,25 +35,20 @@ $SearchBox.Size = New-Object System.Drawing.Size(270, 25)
 # Placeholder text simulation
 $placeholderText = "Search programs..."
 
-# Attach GotFocus event handler to clear placeholder text when the user focuses on the text box
-$SearchBox.Add_GotFocus({
-    if ($SearchBox.Text -eq $placeholderText) {
-        $SearchBox.Text = ""
-        $SearchBox.ForeColor = [System.Drawing.Color]::Black
-    }
-})
-
-# Attach LostFocus event handler to restore placeholder text when the textbox is empty and loses focus
-$SearchBox.Add_LostFocus({
-    if ([string]::IsNullOrEmpty($SearchBox.Text)) {
-        $SearchBox.Text = $placeholderText
-        $SearchBox.ForeColor = [System.Drawing.Color]::Gray
-    }
-})
-
 # Initialize the textbox with placeholder text and a light color to differentiate it
 $SearchBox.Text = $placeholderText
 $SearchBox.ForeColor = [System.Drawing.Color]::Gray
+
+# Add keydown event handler to enable CTRL + A to select all text in the SearchBox
+$SearchBox.Add_KeyDown({
+    param($sender, $e) 
+    
+    # Check if CTRL + A was pressed
+    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
+        $SearchBox.SelectAll()
+        $e.SuppressKeyPress = $true  # Prevent default sound or behavior
+    }
+})
 
 # Create a Search button (still allowing manual search)
 $SearchButton = New-Object System.Windows.Forms.Button
@@ -68,10 +63,15 @@ $Panel.Width = 360
 $Panel.Height = 470  # Increased the height to allow more results to be displayed
 $Panel.Location = New-Object System.Drawing.Point(10, 50)
 
+# Creating the Install button
+$InstallButton = New-Object System.Windows.Forms.Button
+$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
+$InstallButton.Text = 'Install'
+
 # Use an ArrayList to hold all checkbox objects (instead of an array)
 $checkboxes = New-Object System.Collections.ArrayList
 
-# Function to dynamically display checkboxes based on the current script files list
+# Function to update the checkboxes based on the search results
 function Update-Checkboxes($filteredScriptFiles) {
     # Clear old checkboxes from the panel
     $Panel.Controls.Clear()
@@ -127,11 +127,7 @@ $SearchBox.Add_TextChanged({
     $performSearch.Invoke()  # Call the search method as text changes
 })
 
-# Install functionality: run checked scripts
-$InstallButton = New-Object System.Windows.Forms.Button
-$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
-$InstallButton.Text = 'Install'
-
+# Install button click event handler: execute checked scripts
 $InstallButton.Add_Click({
     # Loop through ArrayList and run the checked scripts
     foreach ($checkbox in $checkboxes) {
@@ -142,9 +138,22 @@ $InstallButton.Add_Click({
             Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptFile`"" -Wait
         }
     }
+})
 
-    # Removed $Form.Close() to keep the window open after installation
-    # $Form.Close()  # Commenting this line to avoid closing the form after installation
+# Attach GotFocus event handler to clear placeholder text when the user focuses on the text box
+$SearchBox.Add_GotFocus({
+    if ($SearchBox.Text -eq $placeholderText) {
+        $SearchBox.Text = ""
+        $SearchBox.ForeColor = [System.Drawing.Color]::Black
+    }
+})
+
+# Attach LostFocus event handler to restore placeholder text when the textbox is empty and loses focus
+$SearchBox.Add_LostFocus({
+    if ([string]::IsNullOrEmpty($SearchBox.Text)) {
+        $SearchBox.Text = $placeholderText
+        $SearchBox.ForeColor = [System.Drawing.Color]::Gray
+    }
 })
 
 # Add elements to the form

@@ -29,7 +29,6 @@ if (Test-Path -Path $localRepoPath) {
     Write-Host "Existing folder deleted: $localRepoPath"
 }
 
-
 # Target folder for the unzipped repo content
 $targetFolderPath = "$localRepoPath\Winget"
 
@@ -64,6 +63,17 @@ $placeholderText = "Search programs..."
 $SearchBox.Text = $placeholderText
 $SearchBox.ForeColor = [System.Drawing.Color]::Gray
 
+# Add keydown event handler to enable CTRL + A to select all text in the SearchBox
+$SearchBox.Add_KeyDown({
+    param($sender, $e) 
+    
+    # Check if CTRL + A was pressed
+    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
+        $SearchBox.SelectAll()
+        $e.SuppressKeyPress = $true  # Prevent default sound or behavior
+    }
+})
+
 # Create a Search button (still allowing manual search)
 $SearchButton = New-Object System.Windows.Forms.Button
 $SearchButton.Text = "Search"
@@ -76,6 +86,11 @@ $Panel.AutoScroll = $true
 $Panel.Width = 360
 $Panel.Height = 470  # Increased the height to allow more results to be displayed
 $Panel.Location = New-Object System.Drawing.Point(10, 50)
+
+# Creating the Install button
+$InstallButton = New-Object System.Windows.Forms.Button
+$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
+$InstallButton.Text = 'Install'
 
 # Use an ArrayList to hold all checkbox objects (instead of an array)
 $checkboxes = New-Object System.Collections.ArrayList
@@ -136,11 +151,7 @@ $SearchBox.Add_TextChanged({
     $performSearch.Invoke()  # Call the search method as text changes
 })
 
-# Install functionality: run checked scripts
-$InstallButton = New-Object System.Windows.Forms.Button
-$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
-$InstallButton.Text = 'Install'
-
+# Install button click event handler: execute checked scripts
 $InstallButton.Add_Click({
     # Loop through ArrayList and run the checked scripts
     foreach ($checkbox in $checkboxes) {
