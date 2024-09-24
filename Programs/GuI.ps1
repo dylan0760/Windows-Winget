@@ -2,7 +2,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Function to check if the script is running as administrator
+# Check if the script is running as Administrator
 function Check-Admin {
     $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
     return $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
@@ -18,137 +18,68 @@ if (-not (Check-Admin)) {
 # Path to the folder containing PowerShell scripts
 $scriptFolderPath = "\\OPHELIA\Plex Server\My Software\Windows\Windows Winget\Programs\Windows-Winget\Programs\Powershell Versions"
 
-# Get all .ps1 files in the folder and its subdirectories
+# Corrected the path format -- ensure you update to the correct folder in your environment
+if (-not (Test-Path $scriptFolderPath)) {
+    Write-Error "The path '$scriptFolderPath' does not exist. Please verify the path is correct."
+    exit
+}
+
+# Get all .ps1 files in the folder
 $scriptFiles = Get-ChildItem -Path $scriptFolderPath -Recurse -Filter "*.ps1"
 
-# Define the GUI form
-$Form = New-Object system.Windows.Forms.Form
+# Define the form
+$Form = New-Object System.Windows.Forms.Form
 $Form.Text = 'Select programs to install'
 $Form.Width = 400
 $Form.Height = 600
 
-# Create a TextBox for searching with dynamic placeholder behavior
+# ---- CORE FIX ----
+# Initialize controls here before adding event handlers or adding to form
+$SortComboBox = New-Object System.Windows.Forms.ComboBox
 $SearchBox = New-Object System.Windows.Forms.TextBox
+$SearchButton = New-Object System.Windows.Forms.Button
+$Panel = New-Object System.Windows.Forms.Panel
+$InstallButton = New-Object System.Windows.Forms.Button # Ensure it's initialized
+
+# TextBox for placeholder logic in search
 $SearchBox.Location = New-Object System.Drawing.Point(10, 10)
 $SearchBox.Size = New-Object System.Drawing.Size(270, 25)
-
-# Placeholder text simulation
 $placeholderText = "Search programs..."
-
-# Initialize the textbox with placeholder text and a light color to differentiate it
 $SearchBox.Text = $placeholderText
 $SearchBox.ForeColor = [System.Drawing.Color]::Gray
 
-# Add keydown event handler to enable CTRL + A to select all text in the SearchBox
-$SearchBox.Add_KeyDown({
-    param($sender, $e) 
-    
-    # Check if CTRL + A was pressed
-    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
-        $SearchBox.SelectAll()
-        $e.SuppressKeyPress = $true  # Prevent default sound or behavior
-    }
-})
-
-# Create a Search button (still allowing manual search)
-$SearchButton = New-Object System.Windows.Forms.Button
+# Search Button
 $SearchButton.Text = "Search"
 $SearchButton.Location = New-Object System.Drawing.Point(290, 10)
 $SearchButton.Size = New-Object System.Drawing.Size(75, 25)
 
-# Create a panel to hold the dynamic checkboxes
-$Panel = New-Object System.Windows.Forms.Panel
+# Panel for checkboxes
 $Panel.AutoScroll = $true
 $Panel.Width = 360
-$Panel.Height = 470  # Increased the height to allow more results to be displayed
+$Panel.Height = 470  # Increase the height to show more items
 $Panel.Location = New-Object System.Drawing.Point(10, 50)
 
-# Creating the Install button
-$InstallButton = New-Object System.Windows.Forms.Button
-$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
+# ComboBox for selecting sorting method
+$SortComboBox.Location = New-Object System.Drawing.Point(10, 530)
+$SortComboBox.Size = New-Object System.Drawing.Size(270, 25)
+$SortComboBox.DropDownStyle = [System.Windows.Forms.ComboBoxStyle]::DropDownList
+$SortComboBox.Items.Add("Name (A-Z)")
+$SortComboBox.Items.Add("Date Modified (Newest First)")
+$SortComboBox.Items.Add("Date Modified (Oldest First)")
+$SortComboBox.SelectedIndex = 0
+
+# Create an Install Button
 $InstallButton.Text = 'Install'
+$InstallButton.Size = New-Object System.Drawing.Size(75, 25)
+$InstallButton.Location = New-Object System.Drawing.Point(140, 570)  # Correct Placement
 
-# Use an ArrayList to hold all checkbox objects (instead of an array)
-$checkboxes = New-Object System.Collections.ArrayList
-
-# Function to update the checkboxes based on the search results
-function Update-Checkboxes($filteredScriptFiles) {
-    # Clear old checkboxes from the panel
-    $Panel.Controls.Clear()
-
-    # Reset Y position for the new checkboxes
-    $yPos = 10
-    $checkboxes.Clear()  # Clear existing checkbox list
-
-    # Dynamically create checkboxes for each file in the filtered list
-    foreach ($file in $filteredScriptFiles) {
-        $checkbox = New-Object System.Windows.Forms.CheckBox
-        $checkbox.Text = $file.Name
-        $checkbox.Tag = $file.FullName # Store full path in checkbox's Tag property
-        $checkbox.Size = New-Object System.Drawing.Size(340, 25)
-        $checkbox.Location = New-Object System.Drawing.Point(10, $yPos)
-
-        # Add checkbox to the panel
-        $Panel.Controls.Add($checkbox)
-
-        # Add checkbox to the ArrayList for later reference
-        [void]$checkboxes.Add($checkbox)
-
-        $yPos += 30  # Move checkboxes vertically
-    }
-
-    # Ensure that the height of the panel can appropriately scroll if checkboxes exceed panel space
-    $Panel.AutoScrollMinSize = New-Object System.Drawing.Size(0, $yPos)
-}
-
-# Initial population of checkboxes (show all .ps1 files by default)
-Update-Checkboxes $scriptFiles
-
-# Search functionality logic, reused for both button and dynamic search
-$performSearch = {
-    # Get the current search query from the TextBox
-    $searchQuery = $SearchBox.Text.ToLowerInvariant().Trim()
-
-    # If the search box is empty, reset to show all scripts
-    if ([string]::IsNullOrEmpty($searchQuery) -or $searchQuery -eq $placeholderText.ToLowerInvariant()) {
-        Update-Checkboxes $scriptFiles  # Show all scripts if no search term
-    } else {
-        # Otherwise, filter the script files based on the search query
-        $filteredScriptFiles = $scriptFiles | Where-Object { $_.Name.ToLowerInvariant() -like "*$searchQuery*" }
-        Update-Checkboxes $filteredScriptFiles
-    }
-}
-
-# Search Button clicked: triggers the same search functionality
-$SearchButton.Add_Click($performSearch)
-
-# Trigger search dynamically every time the text box changes (i.e., as you type)
-$SearchBox.Add_TextChanged({
-    $performSearch.Invoke()  # Call the search method as text changes
-})
-
-# Install button click event handler: execute checked scripts
-$InstallButton.Add_Click({
-    # Loop through ArrayList and run the checked scripts
-    foreach ($checkbox in $checkboxes) {
-        if ($checkbox.Checked) {
-            $scriptFile = $checkbox.Tag
-            Write-Host "Installing from script: $scriptFile"
-            # Use Start-Process to run the selected PowerShell script
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptFile`"" -Wait
-        }
-    }
-})
-
-# Attach GotFocus event handler to clear placeholder text when the user focuses on the text box
+# Add SearchBox Event Handlers (placeholders, etc.)
 $SearchBox.Add_GotFocus({
     if ($SearchBox.Text -eq $placeholderText) {
         $SearchBox.Text = ""
         $SearchBox.ForeColor = [System.Drawing.Color]::Black
     }
 })
-
-# Attach LostFocus event handler to restore placeholder text when the textbox is empty and loses focus
 $SearchBox.Add_LostFocus({
     if ([string]::IsNullOrEmpty($SearchBox.Text)) {
         $SearchBox.Text = $placeholderText
@@ -156,13 +87,73 @@ $SearchBox.Add_LostFocus({
     }
 })
 
-# Add elements to the form
+# Search functionality, triggered by dynamic text changes or search button click.
+$performSearch = {
+    $searchQuery = $SearchBox.Text.ToLowerInvariant().Trim()
+    if ([string]::IsNullOrEmpty($searchQuery) -or $searchQuery -eq $placeholderText.ToLowerInvariant()) {
+        Update-Checkboxes $scriptFiles
+    } else {
+        $filteredScriptFiles = $scriptFiles | Where-Object { $_.Name -like "*$searchQuery*" }
+        Update-Checkboxes $filteredScriptFiles
+    }
+}
+
+$SearchButton.Add_Click($performSearch)
+
+# Define function that populates the panel with checkboxes and applies sorting
+function Update-Checkboxes ($filteredScriptFiles) {
+    # Apply user-selected sorting option
+    $sortOption = $SortComboBox.SelectedItem
+    if ($sortOption -eq "Name (A-Z)") {
+        $sortedFiles = $filteredScriptFiles | Sort-Object Name
+    } elseif ($sortOption -eq "Date Modified (Newest First)") {
+        $sortedFiles = $filteredScriptFiles | Sort-Object LastWriteTime -Descending
+    } else {
+        $sortedFiles = $filteredScriptFiles | Sort-Object LastWriteTime
+    }
+
+    # Remove existing checkboxes before populating new ones
+    $Panel.Controls.Clear()
+
+    # Create checkboxes for each file
+    $yPos = 10
+    foreach ($file in $sortedFiles) {
+        $checkbox = New-Object System.Windows.Forms.CheckBox
+        $checkbox.Text = $file.Name
+        $checkbox.Tag = $file
+        $checkbox.Location = New-Object System.Drawing.Point(10, $yPos)
+        $checkbox.Size = New-Object System.Drawing.Size(340, 25)
+        $Panel.Controls.Add($checkbox)
+        $yPos += 30
+    }
+    $Panel.AutoScrollMinSize = New-Object System.Drawing.Size(0, $yPos)
+}
+
+# Populate initial list of checkboxes
+Update-Checkboxes $scriptFiles
+
+# Handle Sorting ComboBox selection change
+$SortComboBox.add_SelectedIndexChanged({
+    $performSearch.Invoke()  # Reapply search and sorting when the sort order is changed
+})
+
+# Install button handler
+$InstallButton.Add_Click({
+    foreach ($control in $Panel.Controls) {
+        if ($control.GetType().Name -eq 'CheckBox' -and $control.Checked) {
+            $scriptFile = $control.Tag.FullName
+            Write-Host "Running script: $scriptFile"
+            Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptFile`"" -Wait
+        }
+    }
+})
+
+# Add controls to the form
 $Form.Controls.Add($SearchBox)
 $Form.Controls.Add($SearchButton)
 $Form.Controls.Add($Panel)
+$Form.Controls.Add($SortComboBox)
 $Form.Controls.Add($InstallButton)
 
-# Show the form
+# Display form
 $Form.ShowDialog()
-
-Pause
