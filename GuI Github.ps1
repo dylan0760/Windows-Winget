@@ -15,6 +15,11 @@ if (-not (Check-Admin)) {
     exit
 }
 
+# Ensure the C:\temp directory exists before downloading the zip
+if (-not (Test-Path -Path "C:\temp")) {
+    New-Item -Path "C:\temp" -ItemType Directory
+}
+
 # Path where GitHub repo zip will be downloaded and extracted
 $tempZipPath = "C:\temp\Winget.zip"
 $localRepoPath = "C:\temp\Winget"
