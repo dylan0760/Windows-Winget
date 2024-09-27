@@ -21,150 +21,47 @@ $localRepoPath = "C:\temp\Winget"
 # URL of the GitHub repo
 $gitRepoUrl = "https://github.com/dylan0760/Windows-Winget.git"
 
-# Check if C:\temp exists, if not, create the directory
-# If the folder exists, delete it before cloning the repo
+# Check if the folder exists, delete it before cloning the repo
 if (Test-Path -Path $localRepoPath) {
-    # Delete the folder and its contents
     Remove-Item -Recurse -Force -Path $localRepoPath
-    Write-Host "Existing folder deleted: $localRepoPath"
 }
 
-# Target folder for the unzipped repo content
+# Clone the GitHub repo if needed
 $targetFolderPath = "$localRepoPath\Winget"
-
-# Clone the GitHub repo if it doesn't exist or needs to be updated
 if (-not (Test-Path -Path $targetFolderPath)) {
-    # Use git to clone the repository from GitHub into C:\temp
-    Write-Host "Cloning GitHub repository..."
     git clone $gitRepoUrl $localRepoPath
 }
 
-# Define the new script folder path inside the cloned repo
-$scriptFolderPath = "$localRepoPath\Programs\Powershell Versions"
-
-# Get all .ps1 files in the folder and its subdirectories
-$scriptFiles = Get-ChildItem -Path $scriptFolderPath -Recurse -Filter "*.ps1"
-
-# Define the GUI form
-$Form = New-Object system.Windows.Forms.Form
-$Form.Text = 'Select programs to install'
+# Form parameters
+$Form = New-Object System.Windows.Forms.Form
+$Form.Text = "Winget Script Installer"
 $Form.Width = 400
-$Form.Height = 600
+$Form.Height = 750 # Increased the form height for better visibility
+$Form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen   # Center Form
 
-# Create a TextBox for searching with dynamic placeholder behavior
+# Placeholder text for search box
+$placeholderText = "Search scripts..."
+
+# Create a Search box
 $SearchBox = New-Object System.Windows.Forms.TextBox
 $SearchBox.Location = New-Object System.Drawing.Point(10, 10)
-$SearchBox.Size = New-Object System.Drawing.Size(270, 25)
-
-# Placeholder text simulation
-$placeholderText = "Search programs..."
-
-# Initialize the textbox with placeholder text and a light color to differentiate it
+$SearchBox.Size = New-Object System.Drawing.Size(275, 25)
 $SearchBox.Text = $placeholderText
 $SearchBox.ForeColor = [System.Drawing.Color]::Gray
 
-# Add keydown event handler to enable CTRL + A to select all text in the SearchBox
-$SearchBox.Add_KeyDown({
-    param($sender, $e) 
-    
-    # Check if CTRL + A was pressed
-    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
-        $SearchBox.SelectAll()
-        $e.SuppressKeyPress = $true  # Prevent default sound or behavior
-    }
-})
+# Create a Search Label for clarity
+$SearchLabel = New-Object System.Windows.Forms.Label
+$SearchLabel.Text = "Search Programs:"
+$SearchLabel.Location = New-Object System.Drawing.Point(10, 40)
+$SearchLabel.Size = New-Object System.Drawing.Size(100, 20)
 
-# Create a Search button (still allowing manual search)
+# Create a Search Button
 $SearchButton = New-Object System.Windows.Forms.Button
 $SearchButton.Text = "Search"
 $SearchButton.Location = New-Object System.Drawing.Point(290, 10)
 $SearchButton.Size = New-Object System.Drawing.Size(75, 25)
 
-# Create a panel to hold the dynamic checkboxes
-$Panel = New-Object System.Windows.Forms.Panel
-$Panel.AutoScroll = $true
-$Panel.Width = 360
-$Panel.Height = 470  # Increased the height to allow more results to be displayed
-$Panel.Location = New-Object System.Drawing.Point(10, 50)
-
-# Creating the Install button
-$InstallButton = New-Object System.Windows.Forms.Button
-$InstallButton.Location = New-Object System.Drawing.Point(140, 530)
-$InstallButton.Text = 'Install'
-
-# Use an ArrayList to hold all checkbox objects (instead of an array)
-$checkboxes = New-Object System.Collections.ArrayList
-
-# Function to update the checkboxes based on the search results
-function Update-Checkboxes($filteredScriptFiles) {
-    # Clear old checkboxes from the panel
-    $Panel.Controls.Clear()
-
-    # Reset Y position for the new checkboxes
-    $yPos = 10
-    $checkboxes.Clear()  # Clear existing checkbox list
-
-    # Dynamically create checkboxes for each file in the filtered list
-    foreach ($file in $filteredScriptFiles) {
-        $checkbox = New-Object System.Windows.Forms.CheckBox
-        $checkbox.Text = $file.Name
-        $checkbox.Tag = $file.FullName # Store full path in checkbox's Tag property
-        $checkbox.Size = New-Object System.Drawing.Size(340, 25)
-        $checkbox.Location = New-Object System.Drawing.Point(10, $yPos)
-
-        # Add checkbox to the panel
-        $Panel.Controls.Add($checkbox)
-
-        # Add checkbox to the ArrayList for later reference
-        [void]$checkboxes.Add($checkbox)
-
-        $yPos += 30  # Move checkboxes vertically
-    }
-
-    # Ensure that the height of the panel can appropriately scroll if checkboxes exceed panel space
-    $Panel.AutoScrollMinSize = New-Object System.Drawing.Size(0, $yPos)
-}
-
-# Initial population of checkboxes (show all .ps1 files by default)
-Update-Checkboxes $scriptFiles
-
-# Search functionality logic, reused for both button and dynamic search
-$performSearch = {
-    # Get the current search query from the TextBox
-    $searchQuery = $SearchBox.Text.ToLowerInvariant().Trim()
-
-    # If the search box is empty, reset to show all scripts
-    if ([string]::IsNullOrEmpty($searchQuery) -or $searchQuery -eq $placeholderText.ToLowerInvariant()) {
-        Update-Checkboxes $scriptFiles  # Show all scripts if no search term
-    } else {
-        # Otherwise, filter the script files based on the search query
-        $filteredScriptFiles = $scriptFiles | Where-Object { $_.Name.ToLowerInvariant() -like "*$searchQuery*" }
-        Update-Checkboxes $filteredScriptFiles
-    }
-}
-
-# Search Button clicked: triggers the same search functionality
-$SearchButton.Add_Click($performSearch)
-
-# Trigger search dynamically every time the text box changes (i.e., as you type)
-$SearchBox.Add_TextChanged({
-    $performSearch.Invoke()  # Call the search method as text changes
-})
-
-# Install button click event handler: execute checked scripts
-$InstallButton.Add_Click({
-    # Loop through ArrayList and run the checked scripts
-    foreach ($checkbox in $checkboxes) {
-        if ($checkbox.Checked) {
-            $scriptFile = $checkbox.Tag
-            Write-Host "Installing from script: $scriptFile"
-            # Use Start-Process to run the selected PowerShell script
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptFile`"" -Wait
-        }
-    }
-})
-
-# Attach GotFocus event handler to clear placeholder text when the user focuses on the text box
+# Attach GotFocus event to handle the placeholder
 $SearchBox.Add_GotFocus({
     if ($SearchBox.Text -eq $placeholderText) {
         $SearchBox.Text = ""
@@ -172,19 +69,167 @@ $SearchBox.Add_GotFocus({
     }
 })
 
-# Attach LostFocus event handler to restore placeholder text when the textbox is empty and loses focus
+# Attach LostFocus event to restore placeholder when empty
 $SearchBox.Add_LostFocus({
-    if ([string]::IsNullOrEmpty($SearchBox.Text)) {
+    if ([string]::IsNullOrWhiteSpace($SearchBox.Text)) {
         $SearchBox.Text = $placeholderText
         $SearchBox.ForeColor = [System.Drawing.Color]::Gray
     }
 })
 
-# Add elements to the form
+# Sample data: Get script files from a local folder
+$localRepoPath = "$localRepoPath"  # Change this to your actual path
+$scriptFiles = Get-ChildItem -Path "$localRepoPath\*.ps1" -Recurse
+
+# Create a panel for dynamic checkboxes
+$Panel = New-Object System.Windows.Forms.Panel
+$Panel.AutoScroll = $true
+$Panel.Width = 360
+$Panel.Height = 380
+$Panel.Location = New-Object System.Drawing.Point(10, 70)
+
+# Create an ArrayList for tracking dynamically created checkboxes
+$checkboxes = New-Object System.Collections.ArrayList
+
+# Function to update the checkboxes
+function Update-Checkboxes($filteredScriptFiles) {
+    $Panel.Controls.Clear()
+    $yPos = 10
+    $checkboxes.Clear()
+
+    foreach ($file in $filteredScriptFiles) {
+        $checkbox = New-Object System.Windows.Forms.CheckBox
+        $checkbox.Text = $file.Name
+        $checkbox.Tag = $file.FullName
+        $checkbox.Size = New-Object System.Drawing.Size(340, 25)
+        $checkbox.Location = New-Object System.Drawing.Point(10, $yPos)
+
+        # Add the checkbox to the panel
+        $Panel.Controls.Add($checkbox)
+        [void]$checkboxes.Add($checkbox)
+        $yPos += 30
+    }
+
+    # Ensure the panel scrolls if needed
+    $Panel.AutoScrollMinSize = New-Object System.Drawing.Size(0, $yPos)
+}
+
+# Initially load checkboxes
+Update-Checkboxes $scriptFiles
+
+# Search functionality logic
+$performSearch = {
+    $searchQuery = $SearchBox.Text.ToLowerInvariant().Trim()
+    if ([string]::IsNullOrEmpty($searchQuery) -or $searchQuery -eq $placeholderText.ToLowerInvariant()) {
+        Update-Checkboxes $scriptFiles  # Show all if no query
+    } else {
+        $filteredScriptFiles = $scriptFiles | Where-Object { $_.Name.ToLowerInvariant() -like "*$searchQuery*" }
+        Update-Checkboxes $filteredScriptFiles
+    }
+}
+
+# Search button event handler
+$SearchButton.Add_Click($performSearch)
+
+# Trigger search as user types
+$SearchBox.Add_TextChanged({
+    $performSearch.Invoke()
+})
+
+# Create "Check All" button
+$CheckAllButton = New-Object System.Windows.Forms.Button
+$CheckAllButton.Text = "Check All"
+$CheckAllButton.Location = New-Object System.Drawing.Point(40, 530)  # Moved above the progress bar
+$CheckAllButton.BackColor = [System.Drawing.Color]::Blue  # Set the background color to Blue
+$CheckAllButton.ForeColor = [System.Drawing.Color]::White  # Set the text (foreground) color to White
+
+# Check All button click event
+$CheckAllButton.Add_Click({
+    foreach ($checkbox in $checkboxes) {
+        $checkbox.Checked = $true
+    }
+})
+
+# Create "Uncheck All" button
+$UncheckAllButton = New-Object System.Windows.Forms.Button
+$UncheckAllButton.Text = "Uncheck All"
+$UncheckAllButton.Location = New-Object System.Drawing.Point(40, 560)  # Moved above the progress bar
+$UncheckAllButton.BackColor = [System.Drawing.Color]::Red  # Set the background color to Red
+$UncheckAllButton.ForeColor = [System.Drawing.Color]::White  # Set the text color to White
+
+# Uncheck All button click event
+$UncheckAllButton.Add_Click({
+    foreach ($checkbox in $checkboxes) {
+        $checkbox.Checked = $false
+    }
+})
+
+# Create "Windows 11 Basic Install" button
+$Windows11BasicButton = New-Object System.Windows.Forms.Button
+$Windows11BasicButton.Text = "Windows 11 Basic Install"
+$Windows11BasicButton.Location = New-Object System.Drawing.Point(40, 590)  # Button location
+$Windows11BasicButton.Size = New-Object System.Drawing.Size(180, 30)  # Adjusted width to 180 to fit the new text
+$Windows11BasicButton.BackColor = [System.Drawing.Color]::Pink  # Optional: Light Gray background
+$Windows11BasicButton.ForeColor = [System.Drawing.Color]::Black  # Optional: Black text color
+
+# "Windows 11 Basic Install" click event selects specific scripts
+$Windows11BasicButton.Add_Click({
+    foreach ($checkbox in $checkboxes) {
+        if ($checkbox.Text -eq "Brave.ps1" -or $checkbox.Text -eq "7-Zip.ps1" -or $checkbox.Text -eq "Notepad++.ps1") {
+            $checkbox.Checked = $true
+        }
+    }
+    [System.Windows.Forms.MessageBox]::Show("Selected Brave, 7-Zip, and Notepad++ scripts", "Info", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+})
+
+# Create the "Windows 11 - Gaming Focused Install" button
+$GamingFocusedButton = New-Object System.Windows.Forms.Button
+$GamingFocusedButton.Text = "Windows 11 - Gaming Focused Install"
+$GamingFocusedButton.Location = New-Object System.Drawing.Point(40, 630)
+$GamingFocusedButton.Size = New-Object System.Drawing.Size(210, 30)  # Wider to match the text
+$GamingFocusedButton.BackColor = [System.Drawing.Color]::Purple  # Optional: Light Gray background
+$GamingFocusedButton.ForeColor = [System.Drawing.Color]::Black  # Optional: Black text color
+
+# Click event to check scripts related to gaming installation
+$GamingFocusedButton.Add_Click({
+    foreach ($checkbox in $checkboxes) {
+        if ($checkbox.Text -in @(
+            "Brave.ps1",
+            "Discord.ps1",
+            "Steam.ps1",
+            "EA Desktop.ps1",
+            "7-Zip.ps1",
+            "Notepad++.ps1",
+            "Ubisoft Connect.ps1",
+            "Epic Games Launcher.ps1",
+            "GOG Galaxy.ps1",
+            "Nvidia GeForce Experience.ps1"
+        )) {
+            $checkbox.Checked = $true
+        }
+    }
+    [System.Windows.Forms.MessageBox]::Show("Selected Gaming Focused scripts!", "Info", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+})
+
+# Create Install button
+$InstallButton = New-Object System.Windows.Forms.Button
+$InstallButton.Location = New-Object System.Drawing.Point(40, 500)  # Moved down a little due to reduced panel height
+$InstallButton.Text = 'Install'
+$InstallButton.BackColor = [System.Drawing.Color]::Green  # Set the background color to Green
+$InstallButton.ForeColor = [System.Drawing.Color]::White  # Set the text (foreground) color to White
+
+
+# Add components to the form
+$Form.Controls.Add($SearchLabel)
 $Form.Controls.Add($SearchBox)
 $Form.Controls.Add($SearchButton)
 $Form.Controls.Add($Panel)
+$Form.Controls.Add($CheckAllButton)
+$Form.Controls.Add($UncheckAllButton)
+$Form.Controls.Add($Windows11BasicButton)
+$Form.Controls.Add($GamingFocusedButton)
 $Form.Controls.Add($InstallButton)
+
 
 # Show the form
 $Form.ShowDialog()
