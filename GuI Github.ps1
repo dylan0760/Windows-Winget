@@ -15,25 +15,32 @@ if (-not (Check-Admin)) {
     exit
 }
 
-# Path where GitHub repo will be cloned
+# Path where GitHub repo zip will be downloaded and extracted
+$tempZipPath = "C:\temp\Winget.zip"
 $localRepoPath = "C:\temp\Winget"
 
-# URL of the GitHub repo
-$gitRepoUrl = "https://github.com/dylan0760/Windows-Winget.git"
+# URL of the GitHub repo zip (update the branch name if necessary)
+$repoUrl = "https://github.com/dylan0760/Windows-Winget/archive/refs/heads/main.zip"
 
-# Check if the folder exists, delete it before cloning the repo
+# Download the .zip file from GitHub
+Invoke-WebRequest -Uri $repoUrl -OutFile $tempZipPath
+
+# Check if the repository folder exists, delete it before extraction
 if (Test-Path -Path $localRepoPath) {
     Remove-Item -Recurse -Force -Path $localRepoPath
 }
 
-# Clone the GitHub repo if needed
-$targetFolderPath = "$localRepoPath\Programs\Powershell Versions"
-if (-not (Test-Path -Path $targetFolderPath)) {
-    git clone $gitRepoUrl $localRepoPath
-}
+# Extract the downloaded .zip archive
+Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+[System.IO.Compression.ZipFile]::ExtractToDirectory($tempZipPath, $localRepoPath)
 
-# Sample data: Get script files from a local folder
-$localRepoPath = "$localRepoPath"  # Change this to your actual path
+# Optional: Remove the .zip file after extraction
+Remove-Item -Path $tempZipPath
+
+# Define the target folder where the PowerShell scripts are located
+$targetFolderPath = "$localRepoPath\Windows-Winget-main\Programs\Powershell Versions"
+
+# Sample data: Get script files from the extracted folder
 $scriptFiles = Get-ChildItem -Path "$targetFolderPath\*.ps1" -Recurse
 
 # Create the form
