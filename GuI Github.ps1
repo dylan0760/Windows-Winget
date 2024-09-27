@@ -50,6 +50,18 @@ $SearchBox.Width = 300
 $SearchBox.Height = 25
 $Form.Controls.Add($SearchBox)
 
+# Implement Ctrl+A shortcut to select all text in SearchBox
+$SearchBox.Add_KeyDown({
+    param ($sender, $e)
+    
+    # Check if Ctrl is pressed and the key is "A"
+    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
+        $SearchBox.SelectAll()  # Select all text in the SearchBox
+        $e.SuppressKeyPress = $true  # Prevent the "A" from being typed
+    }
+})
+
+
 # Create a SearchButton
 $SearchButton = New-Object System.Windows.Forms.Button
 $SearchButton.Text = "Search"
