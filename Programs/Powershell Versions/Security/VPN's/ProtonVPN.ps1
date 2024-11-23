@@ -12,5 +12,5 @@ if (-not $isAdmin) {
 # Your script code goes here
 Write-Host "Running as administrator"
 
-winget install -e --id ProtonTechnologies.ProtonVPN --accept-package-agreements --accept-source-agreements --silent
+winget install -e --id Proton.ProtonVPN  --accept-package-agreements --accept-source-agreements --silent
 Pause
