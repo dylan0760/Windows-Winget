@@ -1,20 +1,4 @@
-﻿#Requires -Version 5.1
-<#
-.SYNOPSIS
-Downloads scripts from GitHub, then provides a GUI to select and install them.
-
-.DESCRIPTION
-Checks for Admin rights, downloads/extracts a GitHub repository to C:\temp,
-then displays a Windows Forms GUI listing scripts from the extracted repo (recursively).
-Allows searching, selecting presets, and installing chosen scripts.
-
-.NOTES
-- Requires internet connection for download.
-- Writes to C:\temp.
-- Preset button script lists require exact matching relative paths from the repo structure.
-#>
-
-# --- Initial Setup & Admin Check ---
+﻿
 
 # Function to check if the script is running as administrator
 function Check-Admin {
