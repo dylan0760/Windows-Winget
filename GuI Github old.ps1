@@ -1,46 +1,32 @@
-﻿# Function to check for Administrator privileges
-function Check-Admin {
-    return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-# Relaunch as Administrator if not already, bypassing execution policy
-if (-not (Check-Admin)) {
-    Write-Warning "Administrator privileges are required. Attempting to relaunch with elevated permissions..."
-    try {
-        # Get the path to the current script file
-        $scriptPath = $MyInvocation.MyCommand.Path
-        # Construct the arguments for the new PowerShell process
-        # -NoProfile: Speeds up startup slightly
-        # -ExecutionPolicy Bypass: Ignores the execution policy for this session
-        # -File: Specifies the script file to run
-        # Note the use of triple quotes (`"`") or backticks (`"`) to handle paths with spaces
-        $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
-
-        # Start a new PowerShell process elevated (RunAs)
-        Start-Process powershell -Verb RunAs -ArgumentList $arguments
-
-        # Optional: Add error handling if Start-Process fails
-    } catch {
-        Write-Error "Failed to relaunch as administrator: $($_.Exception.Message)"
-        # You could add a pause here or a message box if needed
-        Read-Host "Press Enter to exit..."
-    }
-    # Exit the current, non-elevated script instance
-    exit
-}
-
-# --- Your original script code starts here ---
-# Write-Host "Running with Administrator privileges..."
-# (Rest of your script)
-
-
-
-# Add required assemblies
+﻿# Add required assemblies
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName "System.IO.Compression.FileSystem"
 
+# Check for administrator privileges
+function Check-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $currentUser.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
 
+# Relaunch as Administrator if not already
+if (-not (Check-Admin)) {
+    Write-Warning "Administrator privileges required. Attempting to relaunch..."
+    # Ensure the path to the script itself is quoted correctly, especially if it contains spaces
+    $scriptPath = $myinvocation.mycommand.definition
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
+    try {
+        Start-Process powershell -Verb runAs -ArgumentList $arguments
+    } catch {
+        Write-Error "Failed to relaunch as administrator: $($_.Exception.Message)"
+        # Attempt to show a message box if Forms assembly can be loaded quickly
+        try { Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop } catch {}
+        if ([System.Windows.Forms.Application]) {
+            [System.Windows.Forms.MessageBox]::Show("Failed to relaunch as administrator. Please run the script manually as an Administrator.", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error) | Out-Null
+        }
+    }
+    exit # Exit the current non-admin instance
+}
 
 # --- Download and Extract Repository Section ---
 
