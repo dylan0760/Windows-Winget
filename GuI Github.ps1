@@ -556,7 +556,7 @@ $GamingFocusedButton.Add_Click({
         "Ubisoft Connect.ps1",
         "Epic Games Launcher.ps1",
         "GOG Galaxy.ps1",
-        "Nvidia GeForce Experience.ps1"
+        "NVIDIA App Install.ps1"
     )
     
     $selectedCount = 0
