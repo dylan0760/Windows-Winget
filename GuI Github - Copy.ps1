@@ -1,4 +1,4 @@
-﻿
+﻿# Function to check for Administrator privileges
 function Check-Admin {
     return ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
@@ -29,7 +29,9 @@ if (-not (Check-Admin)) {
     exit
 }
 
-
+# --- Your original script code starts here ---
+# Write-Host "Running with Administrator privileges..."
+# (Rest of your script)
 
 
 
