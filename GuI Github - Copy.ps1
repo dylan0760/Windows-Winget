@@ -254,15 +254,6 @@ $SearchBox.Text = "Search..."
 $SearchBox.ForeColor = [System.Drawing.Color]::Gray
 $Form.Controls.Add($SearchBox)
 
-# Ctrl+A support
-$SearchBox.Add_KeyDown({
-    param($sender, $e)
-    if ($e.Control -and $e.KeyCode -eq [System.Windows.Forms.Keys]::A) {
-        $SearchBox.SelectAll()
-        $e.SuppressKeyPress = $true
-    }
-})
-
 # Search events
 $SearchBox.Add_Enter({
     if ($this.Text -eq "Search...") {
