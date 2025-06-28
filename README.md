@@ -10,7 +10,7 @@ WingitLauncher is a PowerShell script that provides an automated solution for la
 
 ### Step 1: Download the Launcher
 
-1. Navigate to the repository and locate the `wingitlauncher.ps1` file
+1. Navigate to the [wingitlauncher.ps1](https://github.com/dylan0760/Windows-Winget/blob/main/Wingit%20Launcher.ps1) file
 2. Click on the file to view its contents
 3. Click the **Download** button or **Raw** button to download the PowerShell script
 4. Save the file to your desired location on your local machine
