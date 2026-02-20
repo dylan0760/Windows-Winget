@@ -12,5 +12,5 @@ if (-not $isAdmin) {
 # Your script code goes here
 Write-Host "Running as administrator"
 
-winget install -e --id=Google.Drive --accept-package-agreements --accept-source-agreements --silent
+winget install -e --id=Dropbox.Dropbox --accept-package-agreements --accept-source-agreements --silent
 Pause
