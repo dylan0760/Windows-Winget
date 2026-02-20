@@ -13,5 +13,5 @@ if (-not $isAdmin) {
 Write-Host "Running as administrator"
 
 
-winget install --id=WhatsApp.WhatsApp -e --accept-package-agreements --accept-source-agreements --silent
+winget install --id=WhatsApp.WhatsApp -e --source msstore --accept-source-agreements --accept-package-agreements --accept-microsoft-store-terms --silent
 Pause
