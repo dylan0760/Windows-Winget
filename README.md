@@ -8,14 +8,23 @@ WingitLauncher is a PowerShell script that provides an automated solution for la
 
 ## Installation & Setup
 
-### Step 1: Download the Launcher
+### Step 1: Download and Run Execution Policy Script
+
+1. Navigate to the [powershell Set-ExecutionPolicy Unrestricted.bat](https://github.com/dylan0760/Windows-Winget/blob/main/Powershell%20Set%20Execution%20Policy/Powershell-Set-Execution-Policy/powershell%20Set-ExecutionPolicy%20Unrestricted.bat) file
+2. Click on the file to view its contents
+3. Click the **Download** button or **Raw** button to download the batch file
+4. Save the file to your desired location on your local machine
+5. **Right-click** on the downloaded `.bat` file and select **Run as administrator**
+6. Click **Yes** when the **User Account Control (UAC)** prompt appears
+
+### Step 2: Download the Launcher
 
 1. Navigate to the [wingitlauncher.ps1](https://github.com/dylan0760/Windows-Winget/blob/main/Wingit%20Launcher.ps1) file
 2. Click on the file to view its contents
 3. Click the **Download** button or **Raw** button to download the PowerShell script
 4. Save the file to your desired location on your local machine
 
-### Step 2: Unblock the Downloaded File
+### Step 3: Unblock the Downloaded File
 
 Due to Windows security policies, downloaded PowerShell scripts are typically blocked by default. To enable execution:
 
@@ -25,7 +34,7 @@ Due to Windows security policies, downloaded PowerShell scripts are typically bl
 4. Check the box next to **Unblock** if it appears
 5. Click **OK** to apply the changes
 
-### Step 3: Execute the Launcher
+### Step 4: Execute the Launcher
 
 1. **Right-click** on the `wingitlauncher.ps1` file
 2. Select **Run with PowerShell** from the context menu
