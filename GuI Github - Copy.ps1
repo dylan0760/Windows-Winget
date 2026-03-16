@@ -79,9 +79,6 @@ Write-Host "Target script folder set to: $targetFolderPath"
 # --- Modern Theme Configuration ---
 
 $script:DarkMode = $false
-$script:SystemThemeChangedHandler = $null
-$script:ThemePreferencePath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
-$script:ThemePreferenceName = "AppsUseLightTheme"
 
 # Refined color palettes
 $ThemeColors = @{
@@ -99,9 +96,6 @@ $ThemeColors = @{
         CheckboxBack      = [System.Drawing.Color]::White
         CheckboxText      = [System.Drawing.Color]::FromArgb(255, 40, 40, 50)
         CheckboxHover     = [System.Drawing.Color]::FromArgb(255, 237, 240, 252)
-        CheckboxSelectedBack  = [System.Drawing.Color]::FromArgb(255, 223, 232, 255)
-        CheckboxSelectedText  = [System.Drawing.Color]::FromArgb(255, 24, 52, 118)
-        CheckboxSelectedHover = [System.Drawing.Color]::FromArgb(255, 210, 224, 255)
         SearchBackground  = [System.Drawing.Color]::White
         SearchBorder      = [System.Drawing.Color]::FromArgb(255, 200, 200, 210)
         SearchText        = [System.Drawing.Color]::FromArgb(255, 30, 30, 30)
@@ -129,9 +123,6 @@ $ThemeColors = @{
         CheckboxBack      = [System.Drawing.Color]::FromArgb(255, 45, 45, 58)
         CheckboxText      = [System.Drawing.Color]::FromArgb(255, 210, 210, 220)
         CheckboxHover     = [System.Drawing.Color]::FromArgb(255, 55, 55, 72)
-        CheckboxSelectedBack  = [System.Drawing.Color]::FromArgb(255, 92, 138, 255)
-        CheckboxSelectedText  = [System.Drawing.Color]::White
-        CheckboxSelectedHover = [System.Drawing.Color]::FromArgb(255, 110, 154, 255)
         SearchBackground  = [System.Drawing.Color]::FromArgb(255, 42, 42, 55)
         SearchBorder      = [System.Drawing.Color]::FromArgb(255, 65, 65, 80)
         SearchText        = [System.Drawing.Color]::FromArgb(255, 210, 210, 220)
@@ -144,29 +135,6 @@ $ThemeColors = @{
         AccentPurple      = [System.Drawing.Color]::FromArgb(255, 145, 90, 215)
         AccentBlue        = [System.Drawing.Color]::FromArgb(255, 60, 140, 220)
         ShadowColor       = [System.Drawing.Color]::FromArgb(40, 0, 0, 0)
-    }
-}
-
-# Helper: Detect current Windows app theme
-function Get-SystemDarkMode {
-    try {
-        $themePreference = Get-ItemProperty -Path $script:ThemePreferencePath -Name $script:ThemePreferenceName -ErrorAction Stop
-        return ($themePreference.$($script:ThemePreferenceName) -eq 0)
-    } catch {
-        return $false
-    }
-}
-
-# Helper: Sync UI theme to system preference
-function Sync-ThemeWithSystem {
-    $script:DarkMode = Get-SystemDarkMode
-
-    if ($Form -and $Form.IsHandleCreated) {
-        if ($Form.InvokeRequired) {
-            $Form.BeginInvoke([Action]{ Apply-Theme -IsDarkMode $script:DarkMode }) | Out-Null
-        } else {
-            Apply-Theme -IsDarkMode $script:DarkMode
-        }
     }
 }
 
@@ -209,7 +177,6 @@ $HeaderFont       = New-Object System.Drawing.Font($FontFamily, 15, [System.Draw
 $SubHeaderFont    = New-Object System.Drawing.Font($FontFamily, 9, [System.Drawing.FontStyle]::Regular)
 $ButtonFont       = New-Object System.Drawing.Font($FontFamily, 9, [System.Drawing.FontStyle]::Bold)
 $CheckboxFont     = New-Object System.Drawing.Font($FontFamily, 9.5, [System.Drawing.FontStyle]::Regular)
-$CheckboxSelectedFont = New-Object System.Drawing.Font($FontFamily, 9.5, [System.Drawing.FontStyle]::Bold)
 $SearchFont       = New-Object System.Drawing.Font($FontFamily, 10, [System.Drawing.FontStyle]::Regular)
 $StatusFont       = New-Object System.Drawing.Font($FontFamily, 8.5, [System.Drawing.FontStyle]::Regular)
 $SectionLabelFont = New-Object System.Drawing.Font($FontFamily, 8, [System.Drawing.FontStyle]::Bold)
@@ -330,29 +297,6 @@ $Panel.GetType().GetProperty("DoubleBuffered", [System.Reflection.BindingFlags]"
 # Global checkbox array
 $script:checkboxes = @()
 
-function Set-CheckboxVisualState {
-    param (
-        [System.Windows.Forms.CheckBox]$Checkbox,
-        [bool]$IsHovered = $false
-    )
-
-    $theme = Get-Theme
-
-    if ($Checkbox.Checked) {
-        $Checkbox.BackColor = if ($IsHovered) { $theme.CheckboxSelectedHover } else { $theme.CheckboxSelectedBack }
-        $Checkbox.ForeColor = $theme.CheckboxSelectedText
-        $Checkbox.Font = $CheckboxSelectedFont
-        $Checkbox.FlatAppearance.BorderColor = $theme.AccentBlue
-    } else {
-        $Checkbox.BackColor = if ($IsHovered) { $theme.CheckboxHover } else { $theme.CheckboxBack }
-        $Checkbox.ForeColor = $theme.CheckboxText
-        $Checkbox.Font = $CheckboxFont
-        $Checkbox.FlatAppearance.BorderColor = $theme.PanelBorder
-    }
-
-    $Checkbox.FlatAppearance.CheckedBackColor = $theme.CheckboxSelectedBack
-}
-
 # Function to update checkboxes
 function Update-Checkboxes {
     param ([System.IO.FileInfo[]]$files)
@@ -382,8 +326,6 @@ function Update-Checkboxes {
         $checkbox.BackColor = $theme.CheckboxBack
         $checkbox.ForeColor = $theme.CheckboxText
         $checkbox.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-        $checkbox.FlatAppearance.BorderSize = 1
-        $checkbox.UseVisualStyleBackColor = $false
         
         try {
             $panelWidth = [int]$Panel.Width
@@ -395,23 +337,18 @@ function Update-Checkboxes {
         
         $checkbox.Padding = New-Object System.Windows.Forms.Padding(6, 0, 0, 0)
         $checkbox.Checked = $false
-        Set-CheckboxVisualState -Checkbox $checkbox
         
         # Hover effect
         $checkbox.Add_MouseEnter({
-            param($sender, $e)
-            Set-CheckboxVisualState -Checkbox $sender -IsHovered $true
+            $t = Get-Theme
+            $this.BackColor = $t.CheckboxHover
         })
         $checkbox.Add_MouseLeave({
-            param($sender, $e)
-            Set-CheckboxVisualState -Checkbox $sender
+            $t = Get-Theme
+            $this.BackColor = $t.CheckboxBack
         })
         # Update count on check/uncheck
-        $checkbox.Add_CheckedChanged({
-            param($sender, $e)
-            Set-CheckboxVisualState -Checkbox $sender
-            Update-SelectedCount
-        })
+        $checkbox.Add_CheckedChanged({ Update-SelectedCount })
         
         $Panel.Controls.Add($checkbox)
         $script:checkboxes += $checkbox
@@ -500,16 +437,12 @@ $PresetsLabel.AutoSize = $true
 $Form.Controls.Add($PresetsLabel)
 
 $btnRow2 = $btnRow1 + $btnHeight + 30
-$presetBtnWidth = 180
-$installBtnWidth = 428
-$xPreset2 = 24 + $presetBtnWidth + $btnGap
-$xInstall = $xPreset2 + $presetBtnWidth + $btnGap
 
 # --- Win 11 Basic Button ---
 $Windows11BasicButton = New-Object System.Windows.Forms.Button
 $Windows11BasicButton.Text = "  Win 11 Basic"
 $Windows11BasicButton.Location = New-Object System.Drawing.Point(24, $btnRow2)
-$Windows11BasicButton.Size = New-Object System.Drawing.Size($presetBtnWidth, $btnHeight)
+$Windows11BasicButton.Size = New-Object System.Drawing.Size($btnWidth, $btnHeight)
 $Windows11BasicButton.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $Windows11BasicButton.FlatAppearance.BorderSize = 0
 $Windows11BasicButton.Font = $ButtonFont
@@ -519,18 +452,31 @@ $Form.Controls.Add($Windows11BasicButton)
 # --- Gaming Focused Button ---
 $GamingFocusedButton = New-Object System.Windows.Forms.Button
 $GamingFocusedButton.Text = "  Gaming Setup"
-$GamingFocusedButton.Location = New-Object System.Drawing.Point($xPreset2, $btnRow2)
-$GamingFocusedButton.Size = New-Object System.Drawing.Size($presetBtnWidth, $btnHeight)
+$GamingFocusedButton.Location = New-Object System.Drawing.Point($x2, $btnRow2)
+$GamingFocusedButton.Size = New-Object System.Drawing.Size($btnWidth, $btnHeight)
 $GamingFocusedButton.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $GamingFocusedButton.FlatAppearance.BorderSize = 0
 $GamingFocusedButton.Font = $ButtonFont
 $GamingFocusedButton.Cursor = [System.Windows.Forms.Cursors]::Hand
 $Form.Controls.Add($GamingFocusedButton)
 
+# --- Theme Toggle Button ---
+$x3 = $x2 + $btnWidth + $btnGap
+$ToggleThemeButton = New-Object System.Windows.Forms.Button
+$ToggleThemeButton.Text = "  Dark Mode"
+$ToggleThemeButton.Location = New-Object System.Drawing.Point($x3, $btnRow2)
+$ToggleThemeButton.Size = New-Object System.Drawing.Size($btnWidth, $btnHeight)
+$ToggleThemeButton.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+$ToggleThemeButton.FlatAppearance.BorderSize = 0
+$ToggleThemeButton.Font = $ButtonFont
+$ToggleThemeButton.Cursor = [System.Windows.Forms.Cursors]::Hand
+$Form.Controls.Add($ToggleThemeButton)
+
 # --- Install Button (prominent, right-aligned) ---
 $InstallButton = New-Object System.Windows.Forms.Button
 $InstallButton.Text = "INSTALL SELECTED"
-$InstallButton.Location = New-Object System.Drawing.Point($xInstall, $btnRow2)
+$installBtnWidth = 200
+$InstallButton.Location = New-Object System.Drawing.Point((836 - $installBtnWidth), $btnRow2)
 $InstallButton.Size = New-Object System.Drawing.Size($installBtnWidth, $btnHeight)
 $InstallButton.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $InstallButton.FlatAppearance.BorderSize = 0
@@ -578,7 +524,8 @@ function Apply-Theme {
     
     # Checkboxes
     $Panel.Controls | Where-Object { $_ -is [System.Windows.Forms.CheckBox] } | ForEach-Object {
-        Set-CheckboxVisualState -Checkbox $_
+        $_.BackColor = $theme.CheckboxBack
+        $_.ForeColor = $theme.CheckboxText
     }
     
     # Section labels
@@ -597,6 +544,10 @@ function Apply-Theme {
     
     $GamingFocusedButton.BackColor = $theme.AccentPurple
     $GamingFocusedButton.ForeColor = $theme.ButtonText
+    
+    $ToggleThemeButton.BackColor = $theme.AccentBlue
+    $ToggleThemeButton.ForeColor = $theme.ButtonText
+    $ToggleThemeButton.Text = if ($IsDarkMode) { "  Light Mode" } else { "  Dark Mode" }
     
     $InstallButton.BackColor = $theme.ButtonPrimary
     $InstallButton.ForeColor = $theme.ButtonText
@@ -633,23 +584,8 @@ Add-ButtonHover $CheckAllButton
 Add-ButtonHover $UncheckAllButton
 Add-ButtonHover $Windows11BasicButton
 Add-ButtonHover $GamingFocusedButton
+Add-ButtonHover $ToggleThemeButton
 Add-ButtonHover $InstallButton
-
-$script:SystemThemeChangedHandler = [Microsoft.Win32.UserPreferenceChangedEventHandler]{
-    param($sender, $eventArgs)
-
-    if ($eventArgs.Category -eq [Microsoft.Win32.UserPreferenceCategory]::General -or
-        $eventArgs.Category -eq [Microsoft.Win32.UserPreferenceCategory]::VisualStyle) {
-        Sync-ThemeWithSystem
-    }
-}
-
-[Microsoft.Win32.SystemEvents]::add_UserPreferenceChanged($script:SystemThemeChangedHandler)
-$Form.Add_FormClosed({
-    if ($script:SystemThemeChangedHandler) {
-        [Microsoft.Win32.SystemEvents]::remove_UserPreferenceChanged($script:SystemThemeChangedHandler)
-    }
-})
 
 # --- Multithreaded Script Execution ---
 function Run-Scripts {
@@ -797,6 +733,11 @@ $UncheckAllButton.Add_Click({
     $Panel.Controls | Where-Object { $_ -is [System.Windows.Forms.CheckBox] } | ForEach-Object { $_.Checked = $false }
 })
 
+$ToggleThemeButton.Add_Click({
+    $script:DarkMode = -not $script:DarkMode
+    Apply-Theme -IsDarkMode $script:DarkMode
+})
+
 $Windows11BasicButton.Add_Click({
     $Panel.Controls | Where-Object { $_ -is [System.Windows.Forms.CheckBox] } | ForEach-Object { $_.Checked = $false }
     
@@ -873,8 +814,8 @@ if (Test-Path -LiteralPath $targetFolderPath -PathType Container) {
 # Initial Checkbox Load
 Update-Checkboxes $scriptFiles
 
-# Initialize with system theme
-Sync-ThemeWithSystem
+# Initialize with light theme
+Apply-Theme -IsDarkMode $script:DarkMode
 
 # Show the form
 $Form.Add_Shown({$Form.Activate()})
