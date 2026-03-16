@@ -828,6 +828,7 @@ $GamingFocusedButton.Add_Click({
     $gamingScripts = @(
         "Brave.ps1",
         "Discord.ps1",
+        "TeamSpeak 6 Client Beta.ps1",
         "Steam.ps1", 
         "EA Desktop.ps1",
         "7-Zip.ps1",
