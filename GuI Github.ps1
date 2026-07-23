@@ -210,7 +210,6 @@ $SubHeaderFont    = New-Object System.Drawing.Font($FontFamily, 9, [System.Drawi
 $ButtonFont       = New-Object System.Drawing.Font($FontFamily, 9, [System.Drawing.FontStyle]::Bold)
 $CheckboxFont     = New-Object System.Drawing.Font($FontFamily, 9.5, [System.Drawing.FontStyle]::Regular)
 $CheckboxSelectedFont = New-Object System.Drawing.Font($FontFamily, 9.5, [System.Drawing.FontStyle]::Bold)
-$IconFont         = New-Object System.Drawing.Font($FontFamily, 10, [System.Drawing.FontStyle]::Bold)
 $SearchFont       = New-Object System.Drawing.Font($FontFamily, 10, [System.Drawing.FontStyle]::Regular)
 $StatusFont       = New-Object System.Drawing.Font($FontFamily, 8.5, [System.Drawing.FontStyle]::Regular)
 $SectionLabelFont = New-Object System.Drawing.Font($FontFamily, 8, [System.Drawing.FontStyle]::Bold)
@@ -354,81 +353,14 @@ function Set-CheckboxVisualState {
     $Checkbox.FlatAppearance.CheckedBackColor = $theme.CheckboxSelectedBack
 }
 
-# Build a compact, dependency-free program badge from the script name.  This
-# keeps every card visually identifiable even when the repository has no icons.
-function New-ProgramIcon {
-    param ([Parameter(Mandatory=$true)][string]$ProgramName)
-
-    $palette = @(
-        [System.Drawing.Color]::FromArgb(255, 54, 112, 214),
-        [System.Drawing.Color]::FromArgb(255, 128, 73, 190),
-        [System.Drawing.Color]::FromArgb(255, 20, 145, 125),
-        [System.Drawing.Color]::FromArgb(255, 220, 112, 35),
-        [System.Drawing.Color]::FromArgb(255, 196, 62, 88),
-        [System.Drawing.Color]::FromArgb(255, 55, 137, 171)
-    )
-
-    $words = @($ProgramName -split '[^A-Za-z0-9]+' | Where-Object { $_ })
-    if ($words.Count -ge 2) {
-        $initials = (($words[0].Substring(0, 1)) + ($words[1].Substring(0, 1))).ToUpperInvariant()
-    } elseif ($ProgramName.Length -ge 2) {
-        $initials = $ProgramName.Substring(0, 2).ToUpperInvariant()
-    } else {
-        $initials = $ProgramName.ToUpperInvariant()
-    }
-
-    $colorIndex = 0
-    foreach ($character in $ProgramName.ToCharArray()) {
-        $colorIndex = ($colorIndex + [int]$character) % $palette.Count
-    }
-
-    $bitmap = New-Object System.Drawing.Bitmap(44, 44)
-    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-    try {
-        $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-        $graphics.TextRenderingHint = [System.Drawing.Text.TextRenderingHint]::ClearTypeGridFit
-        $graphics.Clear([System.Drawing.Color]::Transparent)
-
-        $badgePath = New-RoundedRectPath -Rect (New-Object System.Drawing.Rectangle(1, 1, 42, 42)) -Radius 10
-        try {
-            $badgeBrush = New-Object System.Drawing.SolidBrush($palette[$colorIndex])
-            try { $graphics.FillPath($badgeBrush, $badgePath) } finally { $badgeBrush.Dispose() }
-        } finally {
-            $badgePath.Dispose()
-        }
-
-        $textBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
-        $format = New-Object System.Drawing.StringFormat
-        try {
-            $format.Alignment = [System.Drawing.StringAlignment]::Center
-            $format.LineAlignment = [System.Drawing.StringAlignment]::Center
-            $graphics.DrawString($initials, $IconFont, $textBrush, (New-Object System.Drawing.RectangleF(0, 0, 44, 44)), $format)
-        } finally {
-            $format.Dispose()
-            $textBrush.Dispose()
-        }
-    } finally {
-        $graphics.Dispose()
-    }
-
-    return $bitmap
-}
-
 # Function to update checkboxes
 function Update-Checkboxes {
     param ([System.IO.FileInfo[]]$files)
     
     $Panel.SuspendLayout()
-    # Dispose generated card icons before rebuilding the filtered view.
-    @($Panel.Controls) | Where-Object { $_ -is [System.Windows.Forms.CheckBox] } | ForEach-Object {
-        if ($_.Image) { $_.Image.Dispose() }
-    }
     $Panel.Controls.Clear()
     $script:checkboxes = @()
-    $cardWidth = 382
-    $cardHeight = 68
-    $cardGap = 10
-    $columnGap = 10
+    $y = 8
     
     if ($SearchBox.Text -and $SearchBox.Text -ne "Search programs...") {
         $searchTerm = $SearchBox.Text.ToLower()
@@ -441,36 +373,27 @@ function Update-Checkboxes {
     
     $theme = Get-Theme
     
-    $cardIndex = 0
     foreach ($file in $filteredFiles) {
         $relativePath = Get-RelativePath -basePath $targetFolderPath -fullPath $file.FullName
-        $programName = [System.IO.Path]::GetFileNameWithoutExtension($file.Name)
-        $column = $cardIndex % 2
-        $row = [Math]::Floor($cardIndex / 2)
-        $x = 8 + ($column * ($cardWidth + $columnGap))
-        $y = 8 + ($row * ($cardHeight + $cardGap))
-
         $checkbox = New-Object System.Windows.Forms.CheckBox
-        $checkbox.Text = $programName
-        $checkbox.Tag = $relativePath
-        $checkbox.AccessibleName = $programName
-        $checkbox.AccessibleDescription = "Install script: $relativePath"
-        $checkbox.Location = New-Object System.Drawing.Point($x, $y)
+        $checkbox.Text = $relativePath
+        $checkbox.Location = New-Object System.Drawing.Point(8, $y)
         $checkbox.Font = $CheckboxFont
         $checkbox.BackColor = $theme.CheckboxBack
         $checkbox.ForeColor = $theme.CheckboxText
         $checkbox.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
         $checkbox.FlatAppearance.BorderSize = 1
         $checkbox.UseVisualStyleBackColor = $false
-        $checkbox.Appearance = [System.Windows.Forms.Appearance]::Button
-        $checkbox.Size = New-Object System.Drawing.Size($cardWidth, $cardHeight)
-        $checkbox.Padding = New-Object System.Windows.Forms.Padding(12, 0, 10, 0)
-        $checkbox.Image = New-ProgramIcon -ProgramName $programName
-        $checkbox.ImageAlign = [System.Drawing.ContentAlignment]::MiddleLeft
-        $checkbox.TextAlign = [System.Drawing.ContentAlignment]::MiddleLeft
-        $checkbox.TextImageRelation = [System.Windows.Forms.TextImageRelation]::ImageBeforeText
-        $checkbox.AutoEllipsis = $true
-        $checkbox.Cursor = [System.Windows.Forms.Cursors]::Hand
+        
+        try {
+            $panelWidth = [int]$Panel.Width
+            $checkboxWidth = $panelWidth - 40
+            $checkbox.Size = New-Object System.Drawing.Size($checkboxWidth, 28)
+        } catch {
+            $checkbox.Size = New-Object System.Drawing.Size(760, 28)
+        }
+        
+        $checkbox.Padding = New-Object System.Windows.Forms.Padding(6, 0, 0, 0)
         $checkbox.Checked = $false
         Set-CheckboxVisualState -Checkbox $checkbox
         
@@ -492,7 +415,7 @@ function Update-Checkboxes {
         
         $Panel.Controls.Add($checkbox)
         $script:checkboxes += $checkbox
-        $cardIndex++
+        $y += 30
     }
     
     $Panel.ResumeLayout()
@@ -734,8 +657,8 @@ function Run-Scripts {
     $Form.Controls | ForEach-Object { if ($_ -is [System.Windows.Forms.Button] -or $_ -is [System.Windows.Forms.TextBox]) { $_.Enabled = $false } }
     
     $scriptsToRun = @($Panel.Controls | Where-Object { ($_ -is [System.Windows.Forms.CheckBox]) -and $_.Checked } | ForEach-Object { 
-        $checkboxPath = [string]$_.Tag
-        $scriptFiles | Where-Object { (Get-RelativePath -basePath $targetFolderPath -fullPath $_.FullName) -eq $checkboxPath } | Select-Object -ExpandProperty FullName 
+        $checkboxText = $_.Text
+        $scriptFiles | Where-Object { (Get-RelativePath -basePath $targetFolderPath -fullPath $_.FullName) -eq $checkboxText } | Select-Object -ExpandProperty FullName 
     })
     
     if ($scriptsToRun.Count -eq 0) {
@@ -886,7 +809,7 @@ $Windows11BasicButton.Add_Click({
     
     $selectedCount = 0
     foreach ($checkbox in $Panel.Controls | Where-Object { $_ -is [System.Windows.Forms.CheckBox] }) {
-        $filename = Split-Path -Leaf ([string]$checkbox.Tag)
+        $filename = Split-Path -Leaf $checkbox.Text
         if ($basicScripts -contains $filename -or 
             $basicScripts -contains ($filename -replace '\.ps1$', '') -or 
             $basicScripts -contains "$($filename).ps1") {
@@ -918,7 +841,7 @@ $GamingFocusedButton.Add_Click({
     
     $selectedCount = 0
     foreach ($checkbox in $Panel.Controls | Where-Object { $_ -is [System.Windows.Forms.CheckBox] }) {
-        $filename = Split-Path -Leaf ([string]$checkbox.Tag)
+        $filename = Split-Path -Leaf $checkbox.Text
         if ($gamingScripts -contains $filename -or 
             $gamingScripts -contains ($filename -replace '\.ps1$', '') -or 
             $gamingScripts -contains "$($filename).ps1") {
