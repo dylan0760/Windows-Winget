@@ -1,70 +1,59 @@
-# WingitLauncher
+# Windows WinGet Installer
 
-A PowerShell-based launcher utility designed to streamline application deployment and execution.
+A native Windows desktop application for installing a curated set of programs with WinGet. The launcher is written in Rust and distributed as a 64-bit MSI; PowerShell and execution-policy changes are not required.
 
-## Overview
+## Requirements
 
-WingitLauncher is a PowerShell script that provides an automated solution for launching and managing applications. The launcher handles the necessary setup and execution processes to ensure smooth operation across different Windows environments.
+- Windows 10 or Windows 11, 64-bit
+- [App Installer](https://apps.microsoft.com/detail/9nblggh4nns1), which provides `winget`
+- Internet access while installing selected programs
 
-## Installation & Setup
+## Install and open
 
-### Step 1: Download and Run Execution Policy Script
+Run `target/wix/Windows-WinGet-Installer-1.0.7-x64.msi`, then open **Windows WinGet Installer** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
-1. Navigate to the [powershell Set-ExecutionPolicy Unrestricted.bat](https://github.com/dylan0760/Windows-Winget/blob/main/Powershell%20Set%20Execution%20Policy/Powershell-Set-Execution-Policy/powershell%20Set-ExecutionPolicy%20Unrestricted.bat) file
-2. Click on the file to view its contents
-3. Click the **Download** button or **Raw** button to download the batch file
-4. Save the file to your desired location on your local machine
-5. **Right-click** on the downloaded `.bat` file and select **Run as administrator**
-6. Click **Yes** when the **User Account Control (UAC)** prompt appears
+The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
-### Step 2: Download the Launcher
+```text
+%LOCALAPPDATA%\Windows WinGet Installer\startup-error.log
+```
 
-1. Navigate to the [wingitlauncher.ps1](https://github.com/dylan0760/Windows-Winget/blob/main/Wingit%20Launcher.ps1) file
-2. Click on the file to view its contents
-3. Click the **Download** button or **Raw** button to download the PowerShell script
-4. Save the file to your desired location on your local machine
+## Add or change programs
 
-### Step 3: Unblock the Downloaded File
+Edit `src/catalog.rs`. Each normal entry contains the display name, exact WinGet package ID, and category:
 
-Due to Windows security policies, downloaded PowerShell scripts are typically blocked by default. To enable execution:
+```rust
+package!("Spotify", "Spotify.Spotify", "Media"),
+```
 
-1. **Right-click** on the downloaded `wingitlauncher.ps1` file
-2. Select **Properties** from the context menu
-3. In the Properties dialog box, locate the **Security** section at the bottom
-4. Check the box next to **Unblock** if it appears
-5. Click **OK** to apply the changes
-
-### Step 4: Execute the Launcher
-
-1. **Right-click** on the `wingitlauncher.ps1` file
-2. Select **Run with PowerShell** from the context menu
-3. A **User Account Control (UAC)** prompt will appear requesting administrator permissions
-4. Click **Yes** to grant the necessary permissions
-5. The launcher will now execute with the required privileges
-
-## System Requirements
-
-- Windows 10 or later
-- PowerShell 5.1 or later
-- Administrator privileges (required for UAC elevation)
-
-## Security Considerations
-
-This launcher requires administrator privileges to function properly. The UAC prompt is a security feature that ensures you are aware of the elevated permissions being requested. Only proceed if you trust the source and understand the implications of running scripts with administrator access.
-
-## Troubleshooting
-
-If you encounter any issues with the launcher or need to bypass execution policy restrictions, run the following script in PowerShell:
+The launcher runs the equivalent of:
 
 ```powershell
-if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    # Define the command to run elevated
-    $Cmd = 'Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dylan0760/Windows-Winget/refs/heads/main/GuI%20Github.ps1").Content'
-    # Relaunch PowerShell elevated, telling it to execute the command
-    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command & { $Cmd }"
-    Write-Host "Attempting to relaunch with Administrator privileges..." -ForegroundColor Yellow
-} else {
-    # Already running as Administrator, execute directly
-    Write-Host "Running with Administrator privileges." -ForegroundColor Green
-    Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/dylan0760/Windows-Winget/refs/heads/main/GuI%20Github.ps1").Content
-}
+winget install --id Spotify.Spotify --exact --silent --disable-interactivity --accept-package-agreements --accept-source-agreements
+```
+
+Store packages can specify `source: Some("msstore")`; see the WhatsApp entry for an example. Run the tests after modifying the catalogue because they check for duplicate package IDs and invalid preset references.
+
+## Windows Tweaks
+
+The **Windows Tweaks** tab can switch between dark and light mode, select the highest supported refresh rate at each monitor's current resolution, configure a selected network adapter's Jumbo Packet value, and inspect or change the 64-bit Windows PowerShell execution policy. Jumbo Frames use the supplied script's 9014-byte setting and include a 1514-byte recovery option. The PowerShell section requires explicit confirmation before setting `LocalMachine` to `Unrestricted`, with `Restricted` as the locked-down toggle and `RemoteSigned` as a middle-ground option. Run the application as Administrator for machine-wide changes.
+
+## Windows Activation link
+
+The **Windows Activation** tab opens the configured Gitea repository in the default browser. It only launches the HTTPS URL; it does not download or execute repository content through PowerShell.
+
+## Legacy Windows Panels
+
+The **Legacy Panels** tab directly opens Control Panel, Network Connections, Power Options, Region, Sound, Devices and Printers, System Properties, and User Accounts. These actions use Windows' built-in system executables and do not require the supplied PowerShell launcher scripts.
+
+## Build
+
+Install a stable 64-bit Rust toolchain and WiX Toolset 3.x. The repository's build script can use the bundled WiX binaries in `build-tools/wix314`:
+
+```powershell
+cargo test --all-targets
+cargo build --release
+.\scripts\build-msi.ps1 -SkipBuild -WixBin .\build-tools\wix314
+```
+
+The MSI embeds `assets/app.ico` in the executable, Programs and Features entry, and Start-menu shortcut. Generated Rust and WiX intermediates under `target` are disposable; only the finished executable and MSI are retained in the shared project folder.
