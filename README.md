@@ -10,13 +10,15 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.17-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.18-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
 ```text
 %LOCALAPPDATA%\Windows Toolbox\startup-error.log
 ```
+
+The running application version is always shown at the bottom right. On startup, Windows Toolbox checks the latest stable GitHub release in `dylan0760/Windows-Winget`. It reads the semantic version from an asset named `Windows-Toolbox-X.Y.Z-x64.msi`, which supports the repository's `Latest` release tag. If the asset is newer, an update banner offers a direct download from that repository's GitHub Releases URL. The footer also provides a manual update check.
 
 ## Add or change programs
 
