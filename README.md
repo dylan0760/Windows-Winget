@@ -1,6 +1,6 @@
-# Windows WinGet Installer
+# Windows Toolbox
 
-A native Windows desktop application for installing a curated set of programs with WinGet. The launcher is written in Rust and distributed as a 64-bit MSI; PowerShell and execution-policy changes are not required.
+A native Windows desktop toolbox for installing curated programs and managing useful Windows settings. The application is written in Rust and distributed as a 64-bit MSI.
 
 ## Requirements
 
@@ -10,12 +10,12 @@ A native Windows desktop application for installing a curated set of programs wi
 
 ## Install and open
 
-Run `target/wix/Windows-WinGet-Installer-1.0.13-x64.msi`, then open **Windows WinGet Installer** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.14-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
 ```text
-%LOCALAPPDATA%\Windows WinGet Installer\startup-error.log
+%LOCALAPPDATA%\Windows Toolbox\startup-error.log
 ```
 
 ## Add or change programs
