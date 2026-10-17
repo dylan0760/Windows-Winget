@@ -10,7 +10,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.14-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.15-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -42,7 +42,7 @@ The **ArtCraft** category contains the 14 `storytold` repositories listed in the
 
 ## Windows Tweaks
 
-The **Windows Tweaks** tab can switch between dark and light mode, show or hide File Explorer file extensions and hidden files, toggle Windows Game Mode and mouse acceleration, select the highest supported refresh rate at each monitor's current resolution, configure a selected network adapter's Jumbo Packet value, and inspect or change the 64-bit Windows PowerShell execution policy. The four new preference toggles read their current states when the tab opens. Jumbo Frames use the supplied script's 9014-byte setting and include a 1514-byte recovery option. The PowerShell section requires explicit confirmation before setting `LocalMachine` to `Unrestricted`, with `Restricted` as the locked-down toggle and `RemoteSigned` as a middle-ground option. Run the application as Administrator for machine-wide changes.
+The **Windows Tweaks** tab can switch between dark and light mode, show or hide File Explorer file extensions and hidden files, toggle Windows Game Mode and mouse acceleration, select the highest supported refresh rate at each monitor's current resolution, configure a selected network adapter's Jumbo Packet value, and inspect or change the 64-bit Windows PowerShell execution policy. The four new preference toggles read their current states when the tab opens. Jumbo Frames use the supplied script's 9014-byte setting and include a 1514-byte recovery option. The PowerShell section requires explicit confirmation before setting `LocalMachine` to `Unrestricted`, with `Restricted` as the locked-down toggle and `RemoteSigned` as a middle-ground option. After a change, Windows Toolbox verifies the stored `LocalMachine` value and reports any higher-priority `MachinePolicy`, `UserPolicy`, `Process`, or `CurrentUser` scope that keeps a different policy effective. Group Policy scopes are reported but are never bypassed. Run the application as Administrator for machine-wide changes.
 
 ## Windows Activation link
 
