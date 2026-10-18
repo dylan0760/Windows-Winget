@@ -10,7 +10,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.18-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.19-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -39,6 +39,8 @@ Store packages can specify `source: Some("msstore")`; see the WhatsApp entry for
 The **AI assistants** category includes ChatGPT Desktop from Microsoft Store and Claude Desktop from the WinGet community source.
 
 The **Office** category includes Joplin using the `Joplin.Joplin` WinGet package.
+
+The **Media** category includes LRCGET. It checks the official `tranxuanthang/lrcget` GitHub releases at install time, skips drafts and prereleases, downloads the latest `*_x64_en-US.msi`, verifies its byte size against GitHub's metadata, installs it silently, and removes the temporary MSI. This entry does not require WinGet.
 
 The **ArtCraft** category contains the 14 `storytold` repositories listed in the supplied `Get-ArtCraftMSIs.ps1` reference script. For each selected entry, the launcher checks the 20 most recent GitHub releases, skips drafts and prereleases, downloads the newest release asset matching `*x64*.msi`, verifies its byte size against GitHub's metadata, installs it silently with Windows Installer, and deletes the temporary MSI. These entries do not require WinGet. GitHub API rate limits still apply.
 
