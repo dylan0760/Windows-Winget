@@ -10,7 +10,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.19-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.20-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -51,10 +51,6 @@ The **Windows Tweaks** tab can switch between dark and light mode, show or hide 
 ## Config
 
 The **Config** tab reproduces the requested WinUtil feature mappings locally without downloading or executing WinUtil. It can enable .NET Framework (`NetFx4-AdvSrvs`, `NetFx3`), Hyper-V, the NFS client and WinUtil NFS defaults, Windows Sandbox, and the two WSL platform components. When the tab opens, Windows Toolbox reads the optional-feature states and automatically checks groups whose complete component set is enabled or pending enablement; partially enabled and unavailable groups remain unchecked. A manual refresh button reads the states again. Windows edition requirements still apply, and a restart may be required. The Autologin action downloads Microsoft Sysinternals Autologon from `live.sysinternals.com`, requires a valid Microsoft Authenticode signature, launches its configuration dialog, and deletes the temporary executable afterward.
-
-## Windows Activation link
-
-The **Windows Activation** tab opens the configured Gitea repository in the default browser. It does not download or execute remote PowerShell content.
 
 ## Legacy Windows Panels
 
