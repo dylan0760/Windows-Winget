@@ -1,0 +1,29 @@
+[package]
+name = "windows-toolbox"
+version = "1.0.22"
+edition = "2021"
+description = "A native Windows toolbox for installing applications and managing Windows settings"
+repository = "https://github.com/dylan0760/Windows-Winget"
+license = "MIT"
+build = "build.rs"
+
+[dependencies]
+eframe = { version = "0.33", default-features = false, features = ["default_fonts", "wgpu"] }
+wgpu = { version = "27.0.1", default-features = false, features = ["dx12"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging"] }
+
+[build-dependencies]
+winres = "0.1"
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+opt-level = "s"
+panic = "abort"
+strip = "symbols"
+
+[package.metadata.wix]
+upgrade-guid = "3E20CDEB-17F8-487B-85A0-31D62185052E"
+path-guid = "7A71630E-E4AC-4E6A-A6CC-DF6C4803403E"
+license = false
+eula = false

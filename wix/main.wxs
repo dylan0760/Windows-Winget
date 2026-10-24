@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.22" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Windows Toolbox" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="ApplicationIcon" SourceFile="$(var.ProjectRoot)\assets\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ApplicationIcon" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Windows Toolbox">
+          <Component Id="ApplicationFiles" Guid="7A71630E-E4AC-4E6A-A6CC-DF6C4803403E" Win64="yes">
+            <File Id="WindowsToolboxExe" Source="$(var.SourceDir)\windows-toolbox.exe" KeyPath="yes">
+              <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+                <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
+              </Shortcut>
+            </File>
+          </Component>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder" />
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="Windows Toolbox" Level="1">
+      <ComponentRef Id="ApplicationFiles" />
+    </Feature>
+  </Product>
+</Wix>

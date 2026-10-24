@@ -1,0 +1,9 @@
+/target/
+/build-tools/
+/llvm-mingw.zip
+/wix314-binaries.zip
+/rustup-init.exe
+*.msi
+*.wixobj
+*.wixpdb
+.DS_Store

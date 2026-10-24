@@ -1,1 +1,0 @@
-winget install --id=PokerTH.PokerTH -e --accept-package-agreements --accept-source-agreements --silent
