@@ -1,6 +1,6 @@
 [package]
 name = "windows-toolbox"
-version = "1.0.23"
+version = "1.0.26"
 edition = "2021"
 description = "A native Windows toolbox for installing applications and managing Windows settings"
 repository = "https://github.com/dylan0760/Windows-Winget"

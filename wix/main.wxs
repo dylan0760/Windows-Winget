@@ -1,44 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.23" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
+  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.26" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Windows Toolbox" />
-    <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." MigrateFeatures="no" />
     <MediaTemplate EmbedCab="yes" />
 
     <Icon Id="ApplicationIcon" SourceFile="$(var.ProjectRoot)\assets\app.ico" />
     <Property Id="ARPPRODUCTICON" Value="ApplicationIcon" />
+    <Property Id="CREATE_DESKTOP_SHORTCUT" Value="1" Secure="yes" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="Windows Toolbox">
           <Component Id="ApplicationFiles" Guid="7A71630E-E4AC-4E6A-A6CC-DF6C4803403E" Win64="yes">
             <File Id="WindowsToolboxExe" Source="$(var.SourceDir)\windows-toolbox.exe" KeyPath="yes">
-              <Shortcut Id="StartMenuShortcut" Directory="CommonProgramsFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+              <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
                 <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
               </Shortcut>
             </File>
           </Component>
         </Directory>
       </Directory>
-      <Directory Id="CommonProgramsFolder" />
-      <Directory Id="CommonDesktopFolder">
-        <Component Id="DesktopShortcutComponent" Guid="C753DCF5-521D-46C5-BA47-9ED33B2A2127" Win64="yes">
-          <Shortcut Id="DesktopShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[INSTALLFOLDER]windows-toolbox.exe" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+      <Directory Id="ProgramMenuFolder" />
+      <Directory Id="DesktopFolder">
+        <Component Id="DesktopShortcutComponent" Guid="1EFDBB08-06DA-4C0A-9CA7-6BB12BC043D0">
+          <Shortcut Id="DesktopShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[#WindowsToolboxExe]" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
             <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
           </Shortcut>
-          <RegistryValue Root="HKLM" Key="Software\dylan0760\Windows Toolbox" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
+          <RegistryValue Root="HKCU" Key="Software\dylan0760\Windows Toolbox" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
         </Component>
       </Directory>
     </Directory>
 
     <Feature Id="ProductFeature" Title="Windows Toolbox" Description="Core Windows Toolbox application and Start-menu shortcut." Level="1" Display="expand" Absent="disallow">
       <ComponentRef Id="ApplicationFiles" />
-      <Feature Id="DesktopShortcutFeature" Title="Desktop shortcut" Description="Create a Windows Toolbox shortcut on the desktop." Level="1" AllowAdvertise="no">
+      <Feature Id="DesktopShortcutFeature" Title="Desktop shortcut" Description="Create a Windows Toolbox shortcut on the desktop." Level="1" Display="hidden" AllowAdvertise="no">
+        <Condition Level="0">CREATE_DESKTOP_SHORTCUT &lt;&gt; &quot;1&quot;</Condition>
         <ComponentRef Id="DesktopShortcutComponent" />
       </Feature>
     </Feature>
 
-    <UIRef Id="WixUI_FeatureTree" />
+    <UI Id="WindowsToolboxUI">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="InstallDir" />
+
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="DiskCostDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+
+      <Dialog Id="DesktopShortcutDlg" Width="370" Height="270" Title="[ProductName] Setup" NoMinimize="yes">
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="WixUI_Bmp_Banner" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="250" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Desktop shortcut" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="320" Height="15" Transparent="yes" NoPrefix="yes" Text="Choose whether Setup should add a shortcut to your desktop." />
+        <Control Id="ShortcutPrompt" Type="Text" X="20" Y="70" Width="330" Height="30" Text="Windows Toolbox is always added to the Start menu. You can also create a shortcut on the desktop." />
+        <Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="112" Width="330" Height="18" Property="CREATE_DESKTOP_SHORTCUT" CheckBoxValue="1" Text="Create a desktop shortcut" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)">
+          <Publish Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+          <Publish Event="AddLocal" Value="DesktopShortcutFeature" Order="1">CREATE_DESKTOP_SHORTCUT = &quot;1&quot;</Publish>
+          <Publish Event="Remove" Value="DesktopShortcutFeature" Order="2">CREATE_DESKTOP_SHORTCUT &lt;&gt; &quot;1&quot;</Publish>
+          <Publish Event="NewDialog" Value="InstallDirDlg" Order="3">1</Publish>
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+      </Dialog>
+
+      <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+      <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4">NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;&quot;1&quot;</Publish>
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+
+      <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="DesktopShortcutDlg">LicenseAccepted = &quot;1&quot;</Publish>
+
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="DesktopShortcutDlg">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3">NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;&quot;1&quot;</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID=&quot;1&quot;</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+      <Property Id="ARPNOMODIFY" Value="1" />
+    </UI>
+    <UIRef Id="WixUI_Common" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectRoot)\wix\license.rtf" />
   </Product>
 </Wix>

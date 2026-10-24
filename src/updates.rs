@@ -211,12 +211,19 @@ if ($download.Length -ne [int64]$env:WINDOWS_TOOLBOX_UPDATE_SIZE) {
 Move-Item -LiteralPath $env:WINDOWS_TOOLBOX_UPDATE_PARTIAL -Destination $env:WINDOWS_TOOLBOX_UPDATE_OUTPUT -Force"#;
 
 const LAUNCH_UPDATE_SCRIPT: &str = r#"$ErrorActionPreference = 'Stop'
+$installerExitCode = 1603
+$installerLog = $env:WINDOWS_TOOLBOX_UPDATE_MSI + '.log'
 try {
     Wait-Process -Id ([int]$env:WINDOWS_TOOLBOX_PID) -ErrorAction SilentlyContinue
-    & $env:WINDOWS_TOOLBOX_MSIEXEC /i $env:WINDOWS_TOOLBOX_UPDATE_MSI
-    $installerExitCode = $LASTEXITCODE
+    $quotedMsi = '"' + $env:WINDOWS_TOOLBOX_UPDATE_MSI + '"'
+    $quotedLog = '"' + $installerLog + '"'
+    $installer = Start-Process -FilePath $env:WINDOWS_TOOLBOX_MSIEXEC -ArgumentList @('/i', $quotedMsi, '/L*V', $quotedLog) -Wait -PassThru
+    $installerExitCode = $installer.ExitCode
 } finally {
     Remove-Item -LiteralPath $env:WINDOWS_TOOLBOX_UPDATE_MSI -Force -ErrorAction SilentlyContinue
+}
+if ($installerExitCode -in @(0, 1641, 3010)) {
+    Remove-Item -LiteralPath $installerLog -Force -ErrorAction SilentlyContinue
 }
 exit $installerExitCode"#;
 
@@ -393,6 +400,9 @@ mod tests {
         assert!(DOWNLOAD_UPDATE_SCRIPT.contains("WINDOWS_TOOLBOX_UPDATE_SIZE"));
         assert!(LAUNCH_UPDATE_SCRIPT.contains("WINDOWS_TOOLBOX_MSIEXEC"));
         assert!(LAUNCH_UPDATE_SCRIPT.contains("Wait-Process"));
+        assert!(LAUNCH_UPDATE_SCRIPT.contains("Start-Process"));
+        assert!(LAUNCH_UPDATE_SCRIPT.contains("-Wait -PassThru"));
+        assert!(LAUNCH_UPDATE_SCRIPT.contains("/L*V"));
         assert!(LAUNCH_UPDATE_SCRIPT.contains("Remove-Item"));
     }
 }

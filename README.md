@@ -21,7 +21,7 @@ Windows Toolbox currently includes 107 applications across 20 categories. [View 
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.23-x64.msi`. The installer selects **Desktop shortcut** by default on its feature screen; clear that option if you do not want a shortcut. Windows Toolbox is also added to the Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.26-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -29,7 +29,7 @@ The application uses DirectX 12 and can fall back to a software adapter on virtu
 %LOCALAPPDATA%\Windows Toolbox\startup-error.log
 ```
 
-The running application version is always shown at the bottom right. On startup, Windows Toolbox checks the latest stable GitHub release in `dylan0760/Windows-Winget`. It reads the semantic version from an asset named `Windows-Toolbox-X.Y.Z-x64.msi`, which supports the repository's `Latest` release tag. If the asset is newer, the **Install update** button downloads the official release MSI inside the app, checks its reported byte size and MSI header, closes Windows Toolbox, and opens Windows Installer. The temporary update MSI is removed when installation finishes. The footer also provides a manual update check.
+The running application version is always shown at the bottom right. On startup, Windows Toolbox checks the latest stable GitHub release in `dylan0760/Windows-Winget`. It reads the semantic version from an asset named `Windows-Toolbox-X.Y.Z-x64.msi`, which supports the repository's `Latest` release tag. If the asset is newer, the **Install update** button downloads the official release MSI inside the app, checks its reported byte size and MSI header, closes Windows Toolbox, and opens Windows Installer. The updater waits for Windows Installer to finish before removing the temporary MSI, and retains a verbose `.log` beside it if installation fails. The footer also provides a manual update check.
 
 ## Add or change programs
 

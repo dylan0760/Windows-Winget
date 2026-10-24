@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.23 includes the following 107 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.26 includes the following 107 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -54,7 +54,7 @@ The application itself runs with Administrator rights. Internet access is requir
 
 ### Application updates
 
-Windows Toolbox checks the repository's latest stable GitHub release when it starts and when **Check again** is selected in the footer. If a newer versioned MSI is available, **Install update** downloads it inside the app, checks its size against GitHub's release metadata and verifies its MSI header, then closes the running app and opens Windows Installer. The downloaded MSI is removed after the installer finishes.
+Windows Toolbox checks the repository's latest stable GitHub release when it starts and when **Check again** is selected in the footer. If a newer versioned MSI is available, **Install update** downloads it inside the app, checks its size against GitHub's release metadata and verifies its MSI header, then closes the running app and opens Windows Installer. The updater waits for Windows Installer to finish before deleting the temporary MSI; if installation fails, it keeps a verbose log beside the temporary download for diagnosis.
 
 ## Application catalogue
 
