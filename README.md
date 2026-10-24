@@ -2,6 +2,10 @@
 
 A native Windows desktop toolbox for installing curated programs and managing useful Windows settings. The application is written in Rust and distributed as a 64-bit MSI.
 
+## Included applications
+
+Windows Toolbox currently includes 107 applications across 20 categories. [View the complete application catalogue](PROGRAMS.md) for names, categories, package identifiers, and installation sources.
+
 ## Requirements
 
 - Windows 10 or Windows 11, 64-bit
