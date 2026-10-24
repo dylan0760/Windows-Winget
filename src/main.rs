@@ -21,6 +21,30 @@ use std::os::windows::process::CommandExt;
 #[cfg(windows)]
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
+const GITHUB_REPOSITORY_URL: &str = "https://github.com/dylan0760/Windows-Winget";
+const GITHUB_ICON_MASK: [&str; 20] = [
+    "....................",
+    ".....##......##.....",
+    "....############....",
+    "...##############...",
+    "..################..",
+    ".##################.",
+    ".##################.",
+    ".##################.",
+    ".##################.",
+    ".##################.",
+    "..################..",
+    "...##############...",
+    "....############....",
+    "......########......",
+    "......########......",
+    "..##..########......",
+    ".####.########......",
+    "..###########.......",
+    "....####............",
+    "....................",
+];
+
 const CHOCOLATEY_INSTALL_SCRIPT: &str = r#"Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"#;
 
 enum InstallEvent {
@@ -94,6 +118,7 @@ struct LauncherApp {
     update_status: String,
     update_succeeded: Option<bool>,
     update_exit_requested: bool,
+    github_icon: Option<egui::TextureHandle>,
 }
 
 impl Default for LauncherApp {
@@ -129,8 +154,25 @@ impl Default for LauncherApp {
             update_status: "Update check pending.".to_owned(),
             update_succeeded: None,
             update_exit_requested: false,
+            github_icon: None,
         }
     }
+}
+
+fn github_icon_image() -> egui::ColorImage {
+    let rgba: Vec<u8> = GITHUB_ICON_MASK
+        .iter()
+        .flat_map(|row| {
+            row.bytes().flat_map(|pixel| {
+                if pixel == b'#' {
+                    [255, 255, 255, 255]
+                } else {
+                    [0, 0, 0, 0]
+                }
+            })
+        })
+        .collect();
+    egui::ColorImage::from_rgba_unmultiplied([20, 20], &rgba)
 }
 
 impl LauncherApp {
@@ -1094,6 +1136,22 @@ impl eframe::App for LauncherApp {
                     {
                         self.start_update_check();
                     }
+                    let github_icon = self.github_icon.get_or_insert_with(|| {
+                        ctx.load_texture(
+                            "github-mark",
+                            github_icon_image(),
+                            egui::TextureOptions::LINEAR,
+                        )
+                    });
+                    let github_image = egui::Image::new((github_icon.id(), egui::vec2(16.0, 16.0)))
+                        .tint(ui.visuals().text_color());
+                    if ui
+                        .add(egui::Button::image_and_text(github_image, "GitHub"))
+                        .on_hover_text("Open the Windows Toolbox GitHub repository")
+                        .clicked()
+                    {
+                        ctx.open_url(egui::OpenUrl::new_tab(GITHUB_REPOSITORY_URL));
+                    }
                     if self.update_checking {
                         ui.spinner();
                     }
@@ -1673,7 +1731,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::CHOCOLATEY_INSTALL_SCRIPT;
+    use super::{github_icon_image, CHOCOLATEY_INSTALL_SCRIPT, GITHUB_REPOSITORY_URL};
 
     #[test]
     fn chocolatey_bootstrap_uses_the_official_https_installer() {
@@ -1681,5 +1739,16 @@ mod tests {
         assert!(CHOCOLATEY_INSTALL_SCRIPT.contains("SecurityProtocol -bor 3072"));
         assert!(CHOCOLATEY_INSTALL_SCRIPT.contains("https://community.chocolatey.org/install.ps1"));
         assert!(!CHOCOLATEY_INSTALL_SCRIPT.contains("http://"));
+    }
+
+    #[test]
+    fn github_link_uses_the_project_repository_and_a_visible_icon() {
+        assert_eq!(
+            GITHUB_REPOSITORY_URL,
+            "https://github.com/dylan0760/Windows-Winget"
+        );
+        let icon = github_icon_image();
+        assert_eq!(icon.size, [20, 20]);
+        assert!(icon.pixels.iter().any(|pixel| pixel.a() > 0));
     }
 }
