@@ -2,7 +2,57 @@
 
 Windows Toolbox 1.0.22 includes the following 107 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
-[Return to the main README](README.md)
+[Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
+
+## What the Programs tab does
+
+The Programs tab is a curated multi-application installer. It shows each application as a checkbox, grouped by category, with the package identifier on the right. Installations run sequentially so each application receives an individual success or failure result.
+
+### Search and selection
+
+- Search matches application name, category, or package identifier.
+- **Select visible** checks every application matching the current search.
+- **Deselect visible** clears every application matching the current search.
+- The selected count updates above the catalogue.
+- Application selection is locked while an installation batch is running.
+- **Install selected** starts the batch. Expand an item under **Installation results** to read the installer's output.
+
+### Presets
+
+Choosing a preset replaces the current selection with that preset's applications.
+
+**Windows 11 basic** selects:
+
+- Brave
+- 7-Zip
+- Notepad++
+- VLC media player
+
+**Gaming setup** selects:
+
+- Brave
+- Discord
+- TeamSpeak 6 Client Beta
+- Steam
+- EA app
+- 7-Zip
+- Notepad++
+- Ubisoft Connect
+- Epic Games Launcher
+- GOG Galaxy
+- OBS Studio
+- NVIDIA App
+
+### Installer sources
+
+- **WinGet:** Most applications use an exact package ID with silent, non-interactive installation and automatic package/source agreement acceptance. Windows Toolbox checks that WinGet is available before starting a batch that requires it.
+- **Microsoft Store:** ChatGPT Desktop and WhatsApp use WinGet with the `msstore` source.
+- **GitHub releases:** LRCGET and ArtCraft applications use the newest stable matching x64 MSI. Drafts and prereleases are skipped, the downloaded byte count is checked against GitHub's asset metadata, Windows Installer runs silently, and the temporary MSI is removed.
+- **Chocolatey:** NVIDIA App uses `nvidia-app`. Windows Toolbox checks for `choco`; if missing, it runs Chocolatey's official HTTPS PowerShell bootstrap, verifies that Chocolatey is available, and then runs `choco install nvidia-app --yes --no-progress --limit-output`.
+
+The application itself runs with Administrator rights. Internet access is required for package metadata and downloads. A package can still fail because of network access, vendor installer behaviour, an unavailable source, platform compatibility, or a pending restart.
+
+## Application catalogue
 
 ## AI assistants
 
