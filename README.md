@@ -10,7 +10,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.20-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.22-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -39,6 +39,8 @@ Store packages can specify `source: Some("msstore")`; see the WhatsApp entry for
 The **AI assistants** category includes ChatGPT Desktop from Microsoft Store and Claude Desktop from the WinGet community source.
 
 The **Office** category includes Joplin using the `Joplin.Joplin` WinGet package.
+
+The **Game launchers** category includes NVIDIA App using Chocolatey's `nvidia-app` package, and the Gaming setup preset selects it automatically. Before running `choco install nvidia-app`, Windows Toolbox detects whether Chocolatey is available. When it is missing, the application runs Chocolatey's official PowerShell bootstrap command, verifies that `choco` is now available, and then continues. Existing Chocolatey installations are left unchanged.
 
 The **Media** category includes LRCGET. It checks the official `tranxuanthang/lrcget` GitHub releases at install time, skips drafts and prereleases, downloads the latest `*_x64_en-US.msi`, verifies its byte size against GitHub's metadata, installs it silently, and removes the temporary MSI. This entry does not require WinGet.
 
