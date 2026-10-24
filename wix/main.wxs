@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.22" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
+  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.23" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Windows Toolbox" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." />
     <MediaTemplate EmbedCab="yes" />
@@ -13,18 +13,32 @@
         <Directory Id="INSTALLFOLDER" Name="Windows Toolbox">
           <Component Id="ApplicationFiles" Guid="7A71630E-E4AC-4E6A-A6CC-DF6C4803403E" Win64="yes">
             <File Id="WindowsToolboxExe" Source="$(var.SourceDir)\windows-toolbox.exe" KeyPath="yes">
-              <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+              <Shortcut Id="StartMenuShortcut" Directory="CommonProgramsFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
                 <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
               </Shortcut>
             </File>
           </Component>
         </Directory>
       </Directory>
-      <Directory Id="ProgramMenuFolder" />
+      <Directory Id="CommonProgramsFolder" />
+      <Directory Id="CommonDesktopFolder">
+        <Component Id="DesktopShortcutComponent" Guid="C753DCF5-521D-46C5-BA47-9ED33B2A2127" Win64="yes">
+          <Shortcut Id="DesktopShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[INSTALLFOLDER]windows-toolbox.exe" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+            <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
+          </Shortcut>
+          <RegistryValue Root="HKLM" Key="Software\dylan0760\Windows Toolbox" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
     </Directory>
 
-    <Feature Id="ProductFeature" Title="Windows Toolbox" Level="1">
+    <Feature Id="ProductFeature" Title="Windows Toolbox" Description="Core Windows Toolbox application and Start-menu shortcut." Level="1" Display="expand" Absent="disallow">
       <ComponentRef Id="ApplicationFiles" />
+      <Feature Id="DesktopShortcutFeature" Title="Desktop shortcut" Description="Create a Windows Toolbox shortcut on the desktop." Level="1" AllowAdvertise="no">
+        <ComponentRef Id="DesktopShortcutComponent" />
+      </Feature>
     </Feature>
+
+    <UIRef Id="WixUI_FeatureTree" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectRoot)\wix\license.rtf" />
   </Product>
 </Wix>

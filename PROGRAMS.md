@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.22 includes the following 107 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.23 includes the following 107 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -51,6 +51,10 @@ Choosing a preset replaces the current selection with that preset's applications
 - **Chocolatey:** NVIDIA App uses `nvidia-app`. Windows Toolbox checks for `choco`; if missing, it runs Chocolatey's official HTTPS PowerShell bootstrap, verifies that Chocolatey is available, and then runs `choco install nvidia-app --yes --no-progress --limit-output`.
 
 The application itself runs with Administrator rights. Internet access is required for package metadata and downloads. A package can still fail because of network access, vendor installer behaviour, an unavailable source, platform compatibility, or a pending restart.
+
+### Application updates
+
+Windows Toolbox checks the repository's latest stable GitHub release when it starts and when **Check again** is selected in the footer. If a newer versioned MSI is available, **Install update** downloads it inside the app, checks its size against GitHub's release metadata and verifies its MSI header, then closes the running app and opens Windows Installer. The downloaded MSI is removed after the installer finishes.
 
 ## Application catalogue
 

@@ -60,6 +60,7 @@ enum TweakEvent {
 
 enum UpdateEvent {
     Checked(Result<Option<UpdateInfo>, String>),
+    InstallerReady(Result<String, String>),
 }
 
 struct LauncherApp {
@@ -92,6 +93,7 @@ struct LauncherApp {
     available_update: Option<UpdateInfo>,
     update_status: String,
     update_succeeded: Option<bool>,
+    update_exit_requested: bool,
 }
 
 impl Default for LauncherApp {
@@ -126,6 +128,7 @@ impl Default for LauncherApp {
             available_update: None,
             update_status: "Update check pending.".to_owned(),
             update_succeeded: None,
+            update_exit_requested: false,
         }
     }
 }
@@ -155,6 +158,22 @@ impl LauncherApp {
         });
     }
 
+    fn start_update_install(&mut self, update: UpdateInfo) {
+        if self.update_checking {
+            return;
+        }
+        let (sender, receiver) = mpsc::channel();
+        self.update_receiver = Some(receiver);
+        self.update_checking = true;
+        self.update_status = format!("Downloading Windows Toolbox {}...", update.version);
+        self.update_succeeded = None;
+        std::thread::spawn(move || {
+            let _ = sender.send(UpdateEvent::InstallerReady(updates::install_update(
+                &update,
+            )));
+        });
+    }
+
     fn poll_update_check(&mut self) {
         let Some(receiver) = self.update_receiver.take() else {
             return;
@@ -176,6 +195,21 @@ impl LauncherApp {
                     Err(message) => {
                         self.update_status = format!("Update check failed: {message}");
                         self.available_update = None;
+                        self.update_succeeded = Some(false);
+                    }
+                }
+            }
+            Ok(UpdateEvent::InstallerReady(result)) => {
+                self.update_checking = false;
+                match result {
+                    Ok(message) => {
+                        self.update_status = message;
+                        self.update_succeeded = Some(true);
+                        self.available_update = None;
+                        self.update_exit_requested = true;
+                    }
+                    Err(message) => {
+                        self.update_status = format!("Update installation failed: {message}");
                         self.update_succeeded = Some(false);
                     }
                 }
@@ -937,6 +971,10 @@ impl eframe::App for LauncherApp {
         self.poll_installer();
         self.poll_tweaks();
         self.poll_update_check();
+        if self.update_exit_requested {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+            return;
+        }
         if !self.update_check_started {
             self.start_update_check();
         }
@@ -992,17 +1030,11 @@ impl eframe::App for LauncherApp {
                             updates::CURRENT_VERSION
                         ),
                     );
-                    if ui.button("Download update").clicked() {
-                        match updates::open_update_download(&update) {
-                            Ok(message) => {
-                                self.update_status = message;
-                                self.update_succeeded = Some(true);
-                            }
-                            Err(message) => {
-                                self.update_status = message;
-                                self.update_succeeded = Some(false);
-                            }
-                        }
+                    if ui
+                        .add_enabled(!self.update_checking, egui::Button::new("Install update"))
+                        .clicked()
+                    {
+                        self.start_update_install(update);
                     }
                 });
             }

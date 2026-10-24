@@ -12,7 +12,7 @@ $releaseDirectory = Join-Path $projectRoot "target\release"
 $wixOutputDirectory = Join-Path $projectRoot "target\wix"
 $wixSource = Join-Path $projectRoot "wix\main.wxs"
 $objectFile = Join-Path $wixOutputDirectory "main.wixobj"
-$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.22-x64.msi"
+$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.23-x64.msi"
 
 if (-not $SkipBuild) {
     & $Cargo build --release --manifest-path (Join-Path $projectRoot "Cargo.toml")
@@ -48,15 +48,26 @@ if ($WixBin) {
 
 New-Item -ItemType Directory -Path $wixOutputDirectory -Force | Out-Null
 
-& $candle -nologo -arch x64 "-dSourceDir=$releaseDirectory" "-dProjectRoot=$projectRoot" -out $objectFile $wixSource
-if ($LASTEXITCODE -ne 0) { throw "WiX compiler failed." }
+$wixUiExtensionSource = Join-Path (Split-Path -Parent $light) "WixUIExtension.dll"
+if (-not (Test-Path -LiteralPath $wixUiExtensionSource -PathType Leaf)) {
+    throw "WiX UI extension not found: $wixUiExtensionSource"
+}
+$wixUiExtension = Join-Path ([IO.Path]::GetTempPath()) "WindowsToolbox-WixUIExtension-$PID.dll"
+Copy-Item -LiteralPath $wixUiExtensionSource -Destination $wixUiExtension -Force
 
-$lightArguments = @("-nologo", "-out", $msiFile, $objectFile)
+$lightArguments = @("-nologo", "-ext", $wixUiExtension, "-out", $msiFile, $objectFile)
 if ($SkipValidation) {
     # Some sandbox environments disable the Windows Installer service used by ICE.
-    $lightArguments = @("-nologo", "-sval", "-out", $msiFile, $objectFile)
+    $lightArguments = @("-nologo", "-sval", "-ext", $wixUiExtension, "-out", $msiFile, $objectFile)
 }
-& $light @lightArguments
-if ($LASTEXITCODE -ne 0) { throw "WiX linker failed." }
+try {
+    & $candle -nologo -arch x64 "-dSourceDir=$releaseDirectory" "-dProjectRoot=$projectRoot" -out $objectFile $wixSource
+    if ($LASTEXITCODE -ne 0) { throw "WiX compiler failed." }
+
+    & $light @lightArguments
+    if ($LASTEXITCODE -ne 0) { throw "WiX linker failed." }
+} finally {
+    Remove-Item -LiteralPath $wixUiExtension -Force -ErrorAction SilentlyContinue
+}
 
 Write-Output $msiFile

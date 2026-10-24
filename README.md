@@ -21,7 +21,7 @@ Windows Toolbox currently includes 107 applications across 20 categories. [View 
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.22-x64.msi`, then open **Windows Toolbox** from the Windows Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.23-x64.msi`. The installer selects **Desktop shortcut** by default on its feature screen; clear that option if you do not want a shortcut. Windows Toolbox is also added to the Start menu. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -29,7 +29,7 @@ The application uses DirectX 12 and can fall back to a software adapter on virtu
 %LOCALAPPDATA%\Windows Toolbox\startup-error.log
 ```
 
-The running application version is always shown at the bottom right. On startup, Windows Toolbox checks the latest stable GitHub release in `dylan0760/Windows-Winget`. It reads the semantic version from an asset named `Windows-Toolbox-X.Y.Z-x64.msi`, which supports the repository's `Latest` release tag. If the asset is newer, an update banner offers a direct download from that repository's GitHub Releases URL. The footer also provides a manual update check.
+The running application version is always shown at the bottom right. On startup, Windows Toolbox checks the latest stable GitHub release in `dylan0760/Windows-Winget`. It reads the semantic version from an asset named `Windows-Toolbox-X.Y.Z-x64.msi`, which supports the repository's `Latest` release tag. If the asset is newer, the **Install update** button downloads the official release MSI inside the app, checks its reported byte size and MSI header, closes Windows Toolbox, and opens Windows Installer. The temporary update MSI is removed when installation finishes. The footer also provides a manual update check.
 
 ## Add or change programs
 
@@ -67,4 +67,4 @@ cargo build --release
 .\scripts\build-msi.ps1 -SkipBuild -WixBin .\build-tools\wix314
 ```
 
-The MSI embeds `assets/app.ico` in the executable, Programs and Features entry, and Start-menu shortcut. Generated Rust and WiX intermediates under `target` are disposable; only the finished executable and MSI are retained in the shared project folder.
+The MSI embeds `assets/app.ico` in the executable, Programs and Features entry, Start-menu shortcut, and optional desktop shortcut. Generated Rust and WiX intermediates under `target` are disposable; only the finished executable and MSI are retained in the shared project folder.
