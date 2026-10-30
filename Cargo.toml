@@ -4,7 +4,7 @@ version = "1.0.28"
 edition = "2021"
 description = "A native Windows toolbox for installing applications and managing Windows settings"
 repository = "https://github.com/dylan0760/Windows-Winget"
-license = "MIT"
+license-file = "LICENSE"
 build = "build.rs"
 
 [dependencies]

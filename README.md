@@ -68,3 +68,9 @@ cargo build --release
 ```
 
 The MSI embeds `assets/app.ico` in the executable, Programs and Features entry, Start-menu shortcut, and optional desktop shortcut. Generated Rust and WiX intermediates under `target` are disposable; only the finished executable and MSI are retained in the shared project folder.
+
+## License
+
+Windows Toolbox is source available rather than open source. Official unmodified binary releases are free to install and use for personal or internal business purposes, but the source code may not be copied, redistributed, incorporated into another project, or used to create modified forks or derivative versions without prior written permission. See [LICENSE](LICENSE) for the complete terms.
+
+Copies and versions previously distributed under the MIT License retain the permissions already granted to their recipients; the current license cannot retroactively withdraw those rights.
