@@ -93,6 +93,14 @@ pub const PACKAGES: &[Package] = &[
     artcraft_package!("GridCraft", "gridcraft"),
     artcraft_package!("CADCraft", "cadcraft"),
     artcraft_package!("SoundCraft", "soundcraft"),
+    github_msi_package!(
+        "SolidCraft",
+        "tangency-labs/solidcraft",
+        "ArtCraft",
+        "tangency-labs",
+        "solidcraft",
+        "solidcraft-*-windows-x64.msi"
+    ),
     artcraft_package!("Craft Launcher", "craft-launcher"),
     artcraft_package!("FigCraft", "figcraft"),
     package!("Cinebench R23", "Maxon.CinebenchR23", "Benchmarking"),
@@ -406,6 +414,26 @@ mod tests {
                     .is_some_and(|release| release.owner == "storytold")
             })
             .all(|package| package.category == "ArtCraft" && package.source.is_none()));
+    }
+
+    #[test]
+    fn solidcraft_uses_the_latest_stable_windows_x64_msi() {
+        let solidcraft = PACKAGES
+            .iter()
+            .find(|package| package.name == "SolidCraft")
+            .expect("SolidCraft is missing");
+
+        assert_eq!(solidcraft.id, "tangency-labs/solidcraft");
+        assert_eq!(solidcraft.category, "ArtCraft");
+        assert_eq!(solidcraft.source, None);
+        assert_eq!(
+            solidcraft.github_release,
+            Some(GithubReleaseInstaller {
+                owner: "tangency-labs",
+                repo: "solidcraft",
+                asset_pattern: "solidcraft-*-windows-x64.msi",
+            })
+        );
     }
 
     #[test]

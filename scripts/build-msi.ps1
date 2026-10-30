@@ -12,7 +12,7 @@ $releaseDirectory = Join-Path $projectRoot "target\release"
 $wixOutputDirectory = Join-Path $projectRoot "target\wix"
 $wixSource = Join-Path $projectRoot "wix\main.wxs"
 $objectFile = Join-Path $wixOutputDirectory "main.wixobj"
-$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.27-x64.msi"
+$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.28-x64.msi"
 
 if (-not $SkipBuild) {
     & $Cargo build --release --manifest-path (Join-Path $projectRoot "Cargo.toml")

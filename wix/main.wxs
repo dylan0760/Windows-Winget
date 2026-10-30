@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.27" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
+  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.28" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Windows Toolbox" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." MigrateFeatures="no" />
     <MediaTemplate EmbedCab="yes" />

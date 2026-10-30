@@ -4,7 +4,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Included applications
 
-Windows Toolbox currently includes 107 applications across 20 categories. [View the complete application catalogue](PROGRAMS.md) for names, categories, package identifiers, and installation sources.
+Windows Toolbox currently includes 108 applications across 20 categories. [View the complete application catalogue](PROGRAMS.md) for names, categories, package identifiers, and installation sources.
 
 ## Tab guides
 
@@ -21,7 +21,7 @@ Windows Toolbox currently includes 107 applications across 20 categories. [View 
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.27-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.28-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -55,7 +55,7 @@ The **Game launchers** category includes NVIDIA App using Chocolatey's `nvidia-a
 
 The **Media** category includes LRCGET. It checks the official `tranxuanthang/lrcget` GitHub releases at install time, skips drafts and prereleases, downloads the latest `*_x64_en-US.msi`, verifies its byte size against GitHub's metadata, installs it silently, and removes the temporary MSI. This entry does not require WinGet.
 
-The **ArtCraft** category contains the 14 `storytold` repositories listed in the supplied `Get-ArtCraftMSIs.ps1` reference script. For each selected entry, the launcher checks the 20 most recent GitHub releases, skips drafts and prereleases, downloads the newest release asset matching `*x64*.msi`, verifies its byte size against GitHub's metadata, installs it silently with Windows Installer, and deletes the temporary MSI. These entries do not require WinGet. GitHub API rate limits still apply.
+The **ArtCraft** category contains the 14 `storytold` repositories listed in the supplied `Get-ArtCraftMSIs.ps1` reference script plus SolidCraft from `tangency-labs/solidcraft`. For each selected entry, the launcher checks the 20 most recent GitHub releases, skips drafts and prereleases, downloads the newest matching x64 MSI, verifies its byte size against GitHub's metadata, installs it silently with Windows Installer, and deletes the temporary MSI. SolidCraft specifically selects the versioned `solidcraft-*-windows-x64.msi` asset. These entries do not require WinGet. GitHub API rate limits still apply.
 
 ## Build
 
