@@ -14,18 +14,21 @@
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="Windows Toolbox">
           <Component Id="ApplicationFiles" Guid="7A71630E-E4AC-4E6A-A6CC-DF6C4803403E" Win64="yes">
-            <File Id="WindowsToolboxExe" Source="$(var.SourceDir)\windows-toolbox.exe" KeyPath="yes">
-              <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Windows Toolbox" Description="Install programs and manage Windows settings" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
-                <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
-              </Shortcut>
-            </File>
+            <File Id="WindowsToolboxExe" Source="$(var.SourceDir)\windows-toolbox.exe" KeyPath="yes" />
           </Component>
         </Directory>
       </Directory>
-      <Directory Id="ProgramMenuFolder" />
+      <Directory Id="ProgramMenuFolder">
+        <Component Id="StartMenuShortcutComponent" Guid="A1CB898C-3E8E-4E42-AE96-0B09A595DE93">
+          <Shortcut Id="StartMenuShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[INSTALLFOLDER]windows-toolbox.exe" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+            <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
+          </Shortcut>
+          <RegistryValue Root="HKCU" Key="Software\dylan0760\Windows Toolbox" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
       <Directory Id="DesktopFolder">
         <Component Id="DesktopShortcutComponent" Guid="1EFDBB08-06DA-4C0A-9CA7-6BB12BC043D0">
-          <Shortcut Id="DesktopShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[#WindowsToolboxExe]" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
+          <Shortcut Id="DesktopShortcut" Name="Windows Toolbox" Description="Install programs and manage Windows settings" Target="[INSTALLFOLDER]windows-toolbox.exe" WorkingDirectory="INSTALLFOLDER" Icon="ApplicationIcon" IconIndex="0" Advertise="no">
             <ShortcutProperty Key="System.AppUserModel.ID" Value="dylan0760.WindowsToolbox" />
           </Shortcut>
           <RegistryValue Root="HKCU" Key="Software\dylan0760\Windows Toolbox" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
@@ -35,6 +38,7 @@
 
     <Feature Id="ProductFeature" Title="Windows Toolbox" Description="Core Windows Toolbox application and Start-menu shortcut." Level="1" Display="expand" Absent="disallow">
       <ComponentRef Id="ApplicationFiles" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
       <Feature Id="DesktopShortcutFeature" Title="Desktop shortcut" Description="Create a Windows Toolbox shortcut on the desktop." Level="1" Display="hidden" AllowAdvertise="no">
         <Condition Level="0">CREATE_DESKTOP_SHORTCUT &lt;&gt; &quot;1&quot;</Condition>
         <ComponentRef Id="DesktopShortcutComponent" />
