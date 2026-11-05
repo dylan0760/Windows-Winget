@@ -93,6 +93,9 @@ pub const PACKAGES: &[Package] = &[
     artcraft_package!("GridCraft", "gridcraft"),
     artcraft_package!("CADCraft", "cadcraft"),
     artcraft_package!("SoundCraft", "soundcraft"),
+    artcraft_package!("TextureCraft", "texturecraft"),
+    artcraft_package!("Craft Anything", "craft-anything"),
+    artcraft_package!("MaterialCraft", "materialcraft"),
     github_msi_package!(
         "SolidCraft",
         "tangency-labs/solidcraft",
@@ -376,7 +379,7 @@ mod tests {
     }
 
     #[test]
-    fn artcraft_catalog_matches_the_supplied_script() {
+    fn story_told_artcraft_catalog_uses_expected_repositories() {
         let repos: Vec<_> = PACKAGES
             .iter()
             .filter_map(|package| {
@@ -402,6 +405,9 @@ mod tests {
                 "gridcraft",
                 "cadcraft",
                 "soundcraft",
+                "texturecraft",
+                "craft-anything",
+                "materialcraft",
                 "craft-launcher",
                 "figcraft",
             ]
@@ -413,7 +419,13 @@ mod tests {
                     .github_release
                     .is_some_and(|release| release.owner == "storytold")
             })
-            .all(|package| package.category == "ArtCraft" && package.source.is_none()));
+            .all(|package| {
+                package.category == "ArtCraft"
+                    && package.source.is_none()
+                    && package
+                        .github_release
+                        .is_some_and(|release| release.asset_pattern == "*x64*.msi")
+            }));
     }
 
     #[test]

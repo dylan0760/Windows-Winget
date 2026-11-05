@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.28 includes the following 108 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.29 includes the following 111 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -79,6 +79,9 @@ These applications use the latest stable x64 MSI from their GitHub releases.
 - GridCraft — `storytold/gridcraft`
 - CADCraft — `storytold/cadcraft`
 - SoundCraft — `storytold/soundcraft`
+- TextureCraft — latest stable `texturecraft-*-windows-x64.msi` from `storytold/texturecraft`
+- Craft Anything — latest stable `craft-anything-*-windows-x64.msi` from `storytold/craft-anything`
+- MaterialCraft — latest stable `materialcraft-*-windows-x64.msi` from `storytold/materialcraft`
 - SolidCraft — latest stable `solidcraft-*-windows-x64.msi` from `tangency-labs/solidcraft`
 - Craft Launcher — `storytold/craft-launcher`
 - FigCraft — `storytold/figcraft`
