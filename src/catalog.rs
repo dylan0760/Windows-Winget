@@ -281,12 +281,7 @@ pub const PACKAGES: &[Package] = &[
     package!("UniGetUI", "MartiCliment.UniGetUI", "Utilities"),
 ];
 
-pub const BASIC_PRESET: &[&str] = &[
-    "Brave.Brave",
-    "7zip.7zip",
-    "Notepad++.Notepad++",
-    "VideoLAN.VLC",
-];
+pub const BASIC_PRESET: &[&str] = &["Brave.Brave", "7zip.7zip", "Notepad++.Notepad++"];
 
 pub const GAMING_PRESET: &[&str] = &[
     "Brave.Brave",
@@ -330,6 +325,14 @@ mod tests {
                 "missing {id}"
             );
         }
+    }
+
+    #[test]
+    fn basic_preset_contains_only_the_expected_applications() {
+        assert_eq!(
+            BASIC_PRESET,
+            ["Brave.Brave", "7zip.7zip", "Notepad++.Notepad++"]
+        );
     }
 
     #[test]

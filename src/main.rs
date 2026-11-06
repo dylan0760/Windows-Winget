@@ -22,6 +22,7 @@ use std::os::windows::process::CommandExt;
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
 const GITHUB_REPOSITORY_URL: &str = "https://github.com/dylan0760/Windows-Winget";
+const BASIC_PRESET_LABEL: &str = "Basic install";
 const GITHUB_ICON_MASK: [&str; 20] = [
     "....................",
     ".....##......##.....",
@@ -1186,8 +1187,8 @@ impl eframe::App for LauncherApp {
                             self.set_visible(false);
                         }
                         ui.separator();
-                        if ui.button("Windows 11 basic").clicked() {
-                            self.apply_preset(BASIC_PRESET, "Windows 11 basic");
+                        if ui.button(BASIC_PRESET_LABEL).clicked() {
+                            self.apply_preset(BASIC_PRESET, BASIC_PRESET_LABEL);
                         }
                         if ui.button("Gaming setup").clicked() {
                             self.apply_preset(GAMING_PRESET, "Gaming setup");
@@ -1731,7 +1732,14 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{github_icon_image, CHOCOLATEY_INSTALL_SCRIPT, GITHUB_REPOSITORY_URL};
+    use super::{
+        github_icon_image, BASIC_PRESET_LABEL, CHOCOLATEY_INSTALL_SCRIPT, GITHUB_REPOSITORY_URL,
+    };
+
+    #[test]
+    fn basic_preset_uses_the_requested_label() {
+        assert_eq!(BASIC_PRESET_LABEL, "Basic install");
+    }
 
     #[test]
     fn chocolatey_bootstrap_uses_the_official_https_installer() {

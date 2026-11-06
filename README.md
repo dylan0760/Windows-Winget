@@ -21,7 +21,7 @@ Windows Toolbox currently includes 111 applications across 20 categories. [View 
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.29-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
+Run `target/wix/Windows-Toolbox-1.0.30-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. Windows displays a UAC prompt whenever the application launches because its embedded manifest requires Administrator privileges.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 

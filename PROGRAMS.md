@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.29 includes the following 111 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.30 includes the following 111 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -21,12 +21,11 @@ The Programs tab is a curated multi-application installer. It shows each applica
 
 Choosing a preset replaces the current selection with that preset's applications.
 
-**Windows 11 basic** selects:
+**Basic install** selects:
 
 - Brave
 - 7-Zip
 - Notepad++
-- VLC media player
 
 **Gaming setup** selects:
 
