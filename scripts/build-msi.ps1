@@ -12,7 +12,7 @@ $releaseDirectory = Join-Path $projectRoot "target\release"
 $wixOutputDirectory = Join-Path $projectRoot "target\wix"
 $wixSource = Join-Path $projectRoot "wix\main.wxs"
 $objectFile = Join-Path $wixOutputDirectory "main.wixobj"
-$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.30-x64.msi"
+$msiFile = Join-Path $wixOutputDirectory "Windows-Toolbox-1.0.31-x64.msi"
 
 if (-not $SkipBuild) {
     & $Cargo build --release --manifest-path (Join-Path $projectRoot "Cargo.toml")
@@ -48,17 +48,24 @@ if ($WixBin) {
 
 New-Item -ItemType Directory -Path $wixOutputDirectory -Force | Out-Null
 
-$wixUiExtensionSource = Join-Path (Split-Path -Parent $light) "WixUIExtension.dll"
+$wixExtensionDirectory = Split-Path -Parent $light
+$wixUiExtensionSource = Join-Path $wixExtensionDirectory "WixUIExtension.dll"
+$wixUtilExtensionSource = Join-Path $wixExtensionDirectory "WixUtilExtension.dll"
 if (-not (Test-Path -LiteralPath $wixUiExtensionSource -PathType Leaf)) {
     throw "WiX UI extension not found: $wixUiExtensionSource"
 }
+if (-not (Test-Path -LiteralPath $wixUtilExtensionSource -PathType Leaf)) {
+    throw "WiX Util extension not found: $wixUtilExtensionSource"
+}
 $wixUiExtension = Join-Path ([IO.Path]::GetTempPath()) "WindowsToolbox-WixUIExtension-$PID.dll"
+$wixUtilExtension = Join-Path ([IO.Path]::GetTempPath()) "WindowsToolbox-WixUtilExtension-$PID.dll"
 Copy-Item -LiteralPath $wixUiExtensionSource -Destination $wixUiExtension -Force
+Copy-Item -LiteralPath $wixUtilExtensionSource -Destination $wixUtilExtension -Force
 
-$lightArguments = @("-nologo", "-ext", $wixUiExtension, "-out", $msiFile, $objectFile)
+$lightArguments = @("-nologo", "-ext", $wixUiExtension, "-ext", $wixUtilExtension, "-out", $msiFile, $objectFile)
 if ($SkipValidation) {
     # Some sandbox environments disable the Windows Installer service used by ICE.
-    $lightArguments = @("-nologo", "-sval", "-ext", $wixUiExtension, "-out", $msiFile, $objectFile)
+    $lightArguments = @("-nologo", "-sval", "-ext", $wixUiExtension, "-ext", $wixUtilExtension, "-out", $msiFile, $objectFile)
 }
 try {
     & $candle -nologo -arch x64 "-dSourceDir=$releaseDirectory" "-dProjectRoot=$projectRoot" -out $objectFile $wixSource
@@ -68,6 +75,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "WiX linker failed." }
 } finally {
     Remove-Item -LiteralPath $wixUiExtension -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $wixUtilExtension -Force -ErrorAction SilentlyContinue
 }
 
 Write-Output $msiFile

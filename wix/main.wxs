@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.30" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
+  <Product Id="*" Name="Windows Toolbox" Language="1033" Version="1.0.31" Manufacturer="dylan0760" UpgradeCode="3E20CDEB-17F8-487B-85A0-31D62185052E">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Windows Toolbox" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Windows Toolbox is already installed." MigrateFeatures="no" />
     <MediaTemplate EmbedCab="yes" />
@@ -9,6 +9,10 @@
     <Property Id="ARPPRODUCTICON" Value="ApplicationIcon" />
     <Property Id="CREATE_DESKTOP_SHORTCUT" Value="1" Secure="yes" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Windows Toolbox" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#WindowsToolboxExe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" Return="ignore" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
@@ -87,6 +91,7 @@
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4">NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;&quot;1&quot;</Publish>
 
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" Order="1">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 AND NOT Installed</Publish>
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
