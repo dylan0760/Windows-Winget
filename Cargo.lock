@@ -2568,7 +2568,7 @@ dependencies = [
 
 [[package]]
 name = "windows-toolbox"
-version = "1.0.32"
+version = "1.0.33"
 dependencies = [
  "eframe",
  "wgpu",
