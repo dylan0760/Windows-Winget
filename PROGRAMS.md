@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.31 includes the following 111 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.32 includes the following 113 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -46,7 +46,7 @@ Choosing a preset replaces the current selection with that preset's applications
 
 - **WinGet:** Most applications use an exact package ID with silent, non-interactive installation and automatic package/source agreement acceptance. Windows Toolbox checks that WinGet is available before starting a batch that requires it.
 - **Microsoft Store:** ChatGPT Desktop and WhatsApp use WinGet with the `msstore` source.
-- **GitHub releases:** LRCGET and ArtCraft applications use the newest stable matching x64 MSI. Drafts and prereleases are skipped, the downloaded byte count is checked against GitHub's asset metadata, Windows Installer runs silently, and the temporary MSI is removed.
+- **GitHub releases:** LRCGET, Voxa Client, Voxa Server, and ArtCraft applications use the newest stable matching x64 MSI. Drafts and prereleases are skipped, the downloaded byte count is checked against GitHub's asset metadata, Windows Installer runs silently, and the temporary MSI is removed.
 - **Chocolatey:** NVIDIA App uses `nvidia-app`. Windows Toolbox checks for `choco`; if missing, it runs Chocolatey's official HTTPS PowerShell bootstrap, verifies that Chocolatey is available, and then runs `choco install nvidia-app --yes --no-progress --limit-output`.
 
 The application itself runs with Administrator rights. Internet access is required for package metadata and downloads. A package can still fail because of network access, vendor installer behaviour, an unavailable source, platform compatibility, or a pending restart.
@@ -118,6 +118,8 @@ These applications use the latest stable x64 MSI from their GitHub releases.
 - TeamSpeak 3 Client — `TeamSpeakSystems.TeamSpeakClient`
 - TeamSpeak 6 Client Beta — `TeamSpeakSystems.TeamSpeakClient.Beta.6`
 - WhatsApp — Microsoft Store (`9NKSQGP7F2NH`)
+- Voxa Client — latest stable `Voxa-*-x64.msi` from `dylan0760/voxa-client` GitHub releases
+- Voxa Server — latest stable `Voxa-Server-*-x64.msi` from `dylan0760/voxa-server` GitHub releases
 
 ## Computer info
 

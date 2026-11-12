@@ -152,6 +152,22 @@ pub const PACKAGES: &[Package] = &[
         github_release: None,
         chocolatey_id: None,
     },
+    github_msi_package!(
+        "Voxa Client",
+        "dylan0760/voxa-client",
+        "Communication",
+        "dylan0760",
+        "voxa-client",
+        "Voxa-*-x64.msi"
+    ),
+    github_msi_package!(
+        "Voxa Server",
+        "dylan0760/voxa-server",
+        "Communication",
+        "dylan0760",
+        "voxa-server",
+        "Voxa-Server-*-x64.msi"
+    ),
     package!(
         "CrystalDiskInfo",
         "CrystalDewWorld.CrystalDiskInfo",
@@ -469,5 +485,30 @@ mod tests {
                 asset_pattern: "*_x64_en-US.msi",
             })
         );
+    }
+
+    #[test]
+    fn voxa_uses_the_latest_stable_github_msis() {
+        for (name, repo, asset_pattern) in [
+            ("Voxa Client", "voxa-client", "Voxa-*-x64.msi"),
+            ("Voxa Server", "voxa-server", "Voxa-Server-*-x64.msi"),
+        ] {
+            let package = PACKAGES
+                .iter()
+                .find(|package| package.name == name)
+                .unwrap_or_else(|| panic!("{name} is missing"));
+
+            assert_eq!(package.id, format!("dylan0760/{repo}"));
+            assert_eq!(package.category, "Communication");
+            assert_eq!(package.source, None);
+            assert_eq!(
+                package.github_release,
+                Some(GithubReleaseInstaller {
+                    owner: "dylan0760",
+                    repo,
+                    asset_pattern,
+                })
+            );
+        }
     }
 }
