@@ -4,7 +4,7 @@ A native Windows desktop toolbox for installing curated programs and managing us
 
 ## Included applications
 
-Windows Toolbox currently includes 113 applications across 20 categories. [View the complete application catalogue](PROGRAMS.md) for names, categories, package identifiers, and installation sources.
+Windows Toolbox currently includes 114 applications across 20 categories. [View the complete application catalogue](PROGRAMS.md) for names, categories, package identifiers, and installation sources.
 
 ## Tab guides
 
@@ -21,7 +21,7 @@ Windows Toolbox currently includes 113 applications across 20 categories. [View 
 
 ## Install and open
 
-Run `target/wix/Windows-Toolbox-1.0.33-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. After a successful first-time installation, the final page displays a checked-by-default **Launch Windows Toolbox** option; selecting **Finish** launches the installed app after setup has completed, and clearing the checkbox leaves it closed. Windows then displays a UAC prompt because the application manifest requires Administrator privileges. Cancelling that prompt or a launch failure does not roll back the completed installation.
+Run `target/wix/Windows-Toolbox-1.0.34-x64.msi`. During setup, the installer displays a checked-by-default **Create a desktop shortcut** checkbox; clear it if you do not want the desktop shortcut. The installer always creates `Windows Toolbox.lnk` in the all-users Start-menu Programs folder. After a successful first-time installation, the final page displays a checked-by-default **Launch Windows Toolbox** option; selecting **Finish** launches the installed app after setup has completed, and clearing the checkbox leaves it closed. Windows then displays a UAC prompt because the application manifest requires Administrator privileges. Cancelling that prompt or a launch failure does not roll back the completed installation.
 
 The application uses DirectX 12 and can fall back to a software adapter on virtual machines. If graphics initialization still fails, it displays an error and writes a diagnostic file to:
 
@@ -57,7 +57,7 @@ The **Media** category includes LRCGET. It checks the official `tranxuanthang/lr
 
 The **Communication** category includes Voxa Client and Voxa Server. They check the official `dylan0760/voxa-client` and `dylan0760/voxa-server` GitHub releases at install time, skip drafts and prereleases, download the latest `Voxa-*-x64.msi` or `Voxa-Server-*-x64.msi`, verify its byte size against GitHub's metadata, install it silently, and remove the temporary MSI. These entries do not require WinGet.
 
-The **ArtCraft** category contains 17 `storytold` repositories, including TextureCraft, Craft Anything, and MaterialCraft, plus SolidCraft from `tangency-labs/solidcraft`. For each selected entry, the launcher checks the 20 most recent GitHub releases, skips drafts and prereleases, downloads the newest matching x64 MSI, verifies its byte size against GitHub's metadata, installs it silently with Windows Installer, and deletes the temporary MSI. SolidCraft specifically selects the versioned `solidcraft-*-windows-x64.msi` asset. These entries do not require WinGet. GitHub API rate limits still apply.
+The **ArtCraft** category contains 17 `storytold` repositories, including TextureCraft, Craft Anything, and MaterialCraft, plus SolidCraft from `tangency-labs/solidcraft` and MailCraft from `UCS-Care-Group/mailcraft`. For each selected entry, the launcher checks the 20 most recent GitHub releases, skips drafts and prereleases, downloads the newest matching x64 MSI, verifies its byte size against GitHub's metadata, installs it silently with Windows Installer, and deletes the temporary MSI. SolidCraft and MailCraft specifically select the versioned `solidcraft-*-windows-x64.msi` and `mailcraft-*-windows-x64.msi` assets. These entries do not require WinGet. GitHub API rate limits still apply.
 
 ## Build
 

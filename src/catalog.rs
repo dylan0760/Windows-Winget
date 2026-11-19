@@ -104,6 +104,14 @@ pub const PACKAGES: &[Package] = &[
         "solidcraft",
         "solidcraft-*-windows-x64.msi"
     ),
+    github_msi_package!(
+        "MailCraft",
+        "UCS-Care-Group/mailcraft",
+        "ArtCraft",
+        "UCS-Care-Group",
+        "mailcraft",
+        "mailcraft-*-windows-x64.msi"
+    ),
     artcraft_package!("Craft Launcher", "craft-launcher"),
     artcraft_package!("FigCraft", "figcraft"),
     package!("Cinebench R23", "Maxon.CinebenchR23", "Benchmarking"),
@@ -463,6 +471,26 @@ mod tests {
                 owner: "tangency-labs",
                 repo: "solidcraft",
                 asset_pattern: "solidcraft-*-windows-x64.msi",
+            })
+        );
+    }
+
+    #[test]
+    fn mailcraft_uses_the_latest_stable_windows_x64_msi() {
+        let mailcraft = PACKAGES
+            .iter()
+            .find(|package| package.name == "MailCraft")
+            .expect("MailCraft is missing");
+
+        assert_eq!(mailcraft.id, "UCS-Care-Group/mailcraft");
+        assert_eq!(mailcraft.category, "ArtCraft");
+        assert_eq!(mailcraft.source, None);
+        assert_eq!(
+            mailcraft.github_release,
+            Some(GithubReleaseInstaller {
+                owner: "UCS-Care-Group",
+                repo: "mailcraft",
+                asset_pattern: "mailcraft-*-windows-x64.msi",
             })
         );
     }
