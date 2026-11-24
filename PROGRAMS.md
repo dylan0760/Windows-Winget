@@ -1,6 +1,6 @@
 # Included applications
 
-Windows Toolbox 1.0.34 includes the following 114 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
+Windows Toolbox 1.0.35 includes the following 115 applications. Unless another source is shown, applications are installed using the listed WinGet package identifier.
 
 [Return to the main README](README.md) · [Windows Tweaks](WINDOWS-TWEAKS.md) · [Config](CONFIG.md) · [Legacy Panels](LEGACY-PANELS.md)
 
@@ -81,6 +81,7 @@ These applications use the latest stable x64 MSI from their GitHub releases.
 - TextureCraft — latest stable `texturecraft-*-windows-x64.msi` from `storytold/texturecraft`
 - Craft Anything — latest stable `craft-anything-*-windows-x64.msi` from `storytold/craft-anything`
 - MaterialCraft — latest stable `materialcraft-*-windows-x64.msi` from `storytold/materialcraft`
+- AniCraft — latest stable `anicraft-*-windows-x64.msi` from `storytold/anicraft`
 - SolidCraft — latest stable `solidcraft-*-windows-x64.msi` from `tangency-labs/solidcraft`
 - MailCraft — latest stable `mailcraft-*-windows-x64.msi` from `UCS-Care-Group/mailcraft`
 - Craft Launcher — `storytold/craft-launcher`

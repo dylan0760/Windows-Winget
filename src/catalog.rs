@@ -96,6 +96,7 @@ pub const PACKAGES: &[Package] = &[
     artcraft_package!("TextureCraft", "texturecraft"),
     artcraft_package!("Craft Anything", "craft-anything"),
     artcraft_package!("MaterialCraft", "materialcraft"),
+    artcraft_package!("AniCraft", "anicraft"),
     github_msi_package!(
         "SolidCraft",
         "tangency-labs/solidcraft",
@@ -435,6 +436,7 @@ mod tests {
                 "texturecraft",
                 "craft-anything",
                 "materialcraft",
+                "anicraft",
                 "craft-launcher",
                 "figcraft",
             ]
